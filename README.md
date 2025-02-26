@@ -1,20 +1,23 @@
-# Calculator (currently WIP)
+<div align="center">
+  <img src="https://raw.githubusercontent.com/Pearljam66/Calculator/31bc2d31db020d9ab031a3e43799d7beb084db0c/Calculator/Calculator/Assets.xcassets/AppIcon.appiconset/calculator_any.png" width="150" style="border: 3px solid white; border-radius: 15px; vertical-align: middle; margin-right: 20px;">
+  <h1 style="display: inline-block; vertical-align: middle;">Calculator</h1>
+</div>
 
 A simple SwiftUI calculator app that performs basic arithmetic operations and logs session data to a backend database.
 
 ## Setup
 
-### iOS App
+### iOS App:
 1. Open in Xcode
 2. Ensure network permissions are enabled
 3. Build and run
 
-### Backend
+### Backend:
 1. Install Node.js
 2. Run `npm install express sqlite3`
 3. Run `node server.js`
 
-## Requirements
+## Requirements:
 - Node.js v14+
 - Xcode 16.2
 - iOS 17.0+
