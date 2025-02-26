@@ -13,9 +13,7 @@ A simple SwiftUI calculator app that performs basic arithmetic operations and lo
 3. Build and run
 
 ### Backend:
-1. Install Node.js
-2. Run `npm install express sqlite3`
-3. Run `node server.js`
+To be added
 
 ## Requirements:
 - Node.js v14+
@@ -77,7 +75,6 @@ A simple SwiftUI calculator app that performs basic arithmetic operations and lo
 
 ## Back-end Technical Details
 - GO
-- Node.js
 - SQLite
 
 
