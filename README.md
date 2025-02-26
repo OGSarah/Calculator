@@ -56,3 +56,30 @@ A simple SwiftUI calculator app that performs basic arithmetic operations and lo
 {
   "message": "Session data updated"
 }
+```
+
+**Sample Data**
+
+``` json
+  "session_id": "550e8400-e29b-41d4-a716-446655440000",
+  "add_count": 3,
+  "subtract_count": 1,
+  "multiply_count": 2,
+  "divide_count": 0,
+  "last_updated": "2025-02-26 10:00:00"
+```
+
+## Front-end Technical Details
+- iOS
+- SwiftUI
+- MVVM Architecture
+- Swiftlint
+
+## Back-end Technical Details
+- GO
+- Node.js
+- SQLite
+
+
+
+
