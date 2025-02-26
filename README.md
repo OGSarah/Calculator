@@ -16,3 +16,23 @@ A simple SwiftUI calculator app that performs basic arithmetic operations and lo
 | multiply_count  | INTEGER   | DEFAULT 0                 | Number of multiplication operations performed |
 | divide_count    | INTEGER   | DEFAULT 0                 | Number of division operations performed    |
 | last_updated    | DATETIME  | DEFAULT CURRENT_TIMESTAMP | Timestamp of the last update               |
+
+### API Documentation:
+
+#### POST /api/session
+
+**Request Body:**
+
+```json
+{
+  "sessionId": "string",
+  "operations": {
+    "+": number,
+    "-": number,
+    "*": number,
+    "/": number
+  }
+}
+{
+  "message": "Session data updated"
+}
