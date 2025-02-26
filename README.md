@@ -2,6 +2,23 @@
 
 A simple SwiftUI calculator app that performs basic arithmetic operations and logs session data to a backend database.
 
+## Setup
+
+### iOS App
+1. Open in Xcode
+2. Ensure network permissions are enabled
+3. Build and run
+
+### Backend
+1. Install Node.js
+2. Run `npm install express sqlite3`
+3. Run `node server.js`
+
+## Requirements
+- Node.js v14+
+- Xcode 16.2
+- iOS 17.0+
+
 ## Deliverables
 
 ### Database Schema:
