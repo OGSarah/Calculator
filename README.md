@@ -8,17 +8,20 @@ A simple SwiftUI calculator app that performs basic arithmetic operations and lo
 ## Setup
 
 ### iOS App:
-1. Open in Xcode
-2. Ensure network permissions are enabled
-3. Build and run
+1. Open `Calculator.xcodeproj` in Xcode.
+2. Under `Signing & Capabilities` change the Team value to your development team.
+3. Build and run on a simulator or device.
 
 ### Backend:
-To be added
+1. Install Go (1.21+): `brew install go` (macOS)
+2. Navigate to `backend/`
+3. Run `go mod tidy` to install dependencies
+4. Run `go run main.go` to start the server on `http://localhost:3000`
 
 ## Requirements:
-- Node.js v14+
 - Xcode 16.2
 - iOS 17.0+
+- Go 1.21+
 
 ## Deliverables
 
@@ -72,10 +75,12 @@ To be added
 - SwiftUI
 - MVVM Architecture
 - Swiftlint
+- Persists data locally via CoreData and syncs with the backend
 
 ## Back-end Technical Details
 - GO
 - SQLite
+- The backend stores data in `backend/calculator.db`
 
 
 
