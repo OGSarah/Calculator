@@ -13,7 +13,7 @@ class CalculatorViewModel: ObservableObject {
     private var currentNum: Double = 0
     private var previousNum: Double = 0
     private var operation: String = ""
-    private var operationCounts: [String: Int] = ["+": 0, "-": 0, "*": 0, "/": 0]
+    private var operationCounts: [String: Int] = ["+": 0, "−": 0, "×": 0, "÷": 0]
 
     init() {
         if let savedId = UserDefaults.standard.string(forKey: "sessionId") {
@@ -26,16 +26,16 @@ class CalculatorViewModel: ObservableObject {
 
     func handleButtonPress(_ value: String) {
         switch value {
-            case "0"..."9":
-                appendNumber(value)
-            case "+", "-", "*", "/":
-                setOperation(value)
-            case "=":
-                calculate()
-            case "C":
-                clear()
-            default:
-                break
+        case "0"..."9":
+            appendNumber(value)
+        case "+", "-", "×", "÷":
+            setOperation(value)
+        case "=":
+            calculate()
+        case "AC":
+            clear()
+        default:
+            break
         }
     }
 
@@ -44,22 +44,22 @@ class CalculatorViewModel: ObservableObject {
         currentNum = Double(display) ?? 0
     }
 
-    private func setOperation(_ op: String) {
+    private func setOperation(_ ope: String) {
         previousNum = currentNum
-        operation = op
+        operation = ope
         display = "0"
-        operationCounts[op, default: 0] += 1
+        operationCounts[ope, default: 0] += 1
         saveSessionData()
     }
 
     private func calculate() {
         let result: Double
         switch operation {
-            case "+": result = previousNum + currentNum
-            case "-": result = previousNum - currentNum
-            case "*": result = previousNum * currentNum
-            case "/": result = currentNum != 0 ? previousNum / currentNum : 0
-            default: return
+        case "+": result = previousNum + currentNum
+        case "−": result = previousNum - currentNum
+        case "×": result = previousNum * currentNum
+        case "÷": result = currentNum != 0 ? previousNum / currentNum : 0
+        default: return
         }
         display = String(result)
         currentNum = result

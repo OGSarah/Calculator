@@ -7,15 +7,13 @@
 
 import SwiftUI
 
-import SwiftUI
-
 struct CalculatorView: View {
     @StateObject private var viewModel = CalculatorViewModel()
 
     var body: some View {
         VStack(spacing: 20) {
             Text("Session: \(viewModel.sessionId.prefix(8))...")
-                .font(.caption)
+                .font(.title)
                 .foregroundColor(.gray)
 
             Text(viewModel.display)
@@ -42,10 +40,10 @@ struct CalculatorView: View {
     }
 
     private let buttonLayout: [[ButtonConfig?]] = [
-        [.init(title: "7"), .init(title: "8"), .init(title: "9"), .init(title: "/")],
-        [.init(title: "4"), .init(title: "5"), .init(title: "6"), .init(title: "*")],
-        [.init(title: "1"), .init(title: "2"), .init(title: "3"), .init(title: "-")],
-        [.init(title: "0"), .init(title: "C"), .init(title: "="), .init(title: "+")]
+        [.init(title: "7"), .init(title: "8"), .init(title: "9"), .init(title: "÷")],
+        [.init(title: "4"), .init(title: "5"), .init(title: "6"), .init(title: "×")],
+        [.init(title: "1"), .init(title: "2"), .init(title: "3"), .init(title: "−")],
+        [.init(title: "0"), .init(title: "AC"), .init(title: "="), .init(title: "+")]
     ]
 }
 

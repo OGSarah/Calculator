@@ -8,7 +8,7 @@
 import Foundation
 
 class CalculatorManager: ObservableObject {
-    private var operationCounts: [String: Int] = ["+": 0, "-": 0, "*": 0, "/": 0]
+    private var operationCounts: [String: Int] = ["+": 0, "−": 0, "×": 0, "÷": 0]
 
     func incrementOperation(_ operation: String) {
         operationCounts[operation, default: 0] += 1

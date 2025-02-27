@@ -25,11 +25,11 @@ struct CalculatorButton: View {
 
 // MARK: Previews
 #Preview("Light Mode") {
-    CalculatorButton(title: <#T##String#>, action: <#T##() -> Void#>)
+    CalculatorButton(title: "1", action: { print("Button pressed") })
         .preferredColorScheme(.light)
 }
 
 #Preview("Dark Mode") {
-    CalculatorButton(title: <#T##String#>, action: <#T##() -> Void#>)
+    CalculatorButton(title: "1", action: { print("Button pressed") })
         .preferredColorScheme(.dark)
 }
