@@ -25,10 +25,11 @@ struct SessionDataView: View {
 
                     SessionDetailView(
                         sessionId: viewModel.sessionId,
-                        addCount: viewModel.getCurrentOperationCounts()["+", default: 0],
-                        subtractCount: viewModel.getCurrentOperationCounts()["−", default: 0],
-                        multiplyCount: viewModel.getCurrentOperationCounts()["×", default: 0],
-                        divideCount: viewModel.getCurrentOperationCounts()["÷", default: 0]
+                        addCount: viewModel.getCurrentSessionData().addCount,
+                        subtractCount: viewModel.getCurrentSessionData().subtractCount,
+                        multiplyCount: viewModel.getCurrentSessionData().multiplyCount,
+                        divideCount: viewModel.getCurrentSessionData().divideCount,
+                        lastUpdated: viewModel.getCurrentSessionData().lastUpdated
                     )
                     .padding()
                     .background(Color(.systemGray6))
@@ -43,10 +44,11 @@ struct SessionDataView: View {
                             ForEach(sessions.filter { $0.sessionId != viewModel.sessionId }) { session in
                                 SessionDetailView(
                                     sessionId: session.sessionId,
-                                    addCount: session.operations["+", default: 0],
-                                    subtractCount: session.operations["−", default: 0],
-                                    multiplyCount: session.operations["×", default: 0],
-                                    divideCount: session.operations["÷", default: 0]
+                                    addCount: session.addCount,
+                                    subtractCount: session.subtractCount,
+                                    multiplyCount: session.multiplyCount,
+                                    divideCount: session.divideCount,
+                                    lastUpdated: session.lastUpdated
                                 )
                             }
                         }

@@ -14,18 +14,34 @@ class CalculatorViewModel: ObservableObject {
     private var currentNum: Double = 0
     private var previousNum: Double = 0
     private var operation: String = ""
-    private var operationCounts: [String: Int] = ["+": 0, "−": 0, "×": 0, "÷": 0]
+    private var currentSession: SessionData
     private let coreDataManager = CoreDataManager.shared
-    private let backendBaseURL = "http://localhost:3000" // Adjust for physical device IP if needed
+    private let backendBaseURL = "http://localhost:3000"
 
     init() {
         if let savedId = UserDefaults.standard.string(forKey: "sessionId") {
             sessionId = savedId
+            let operations = coreDataManager.loadOperations(for: sessionId)
+            currentSession = SessionData(
+                sessionId: sessionId,
+                addCount: operations["+", default: 0],
+                subtractCount: operations["−", default: 0],
+                multiplyCount: operations["×", default: 0],
+                divideCount: operations["÷", default: 0],
+                lastUpdated: coreDataManager.fetchLastUpdated(for: sessionId) ?? Date()
+            )
         } else {
             sessionId = UUID().uuidString
             UserDefaults.standard.set(sessionId, forKey: "sessionId")
+            currentSession = SessionData(
+                sessionId: sessionId,
+                addCount: 0,
+                subtractCount: 0,
+                multiplyCount: 0,
+                divideCount: 0,
+                lastUpdated: Date()
+            )
         }
-        operationCounts = coreDataManager.loadOperations(for: sessionId)
     }
 
     func handleButtonPress(_ value: String) {
@@ -52,18 +68,57 @@ class CalculatorViewModel: ObservableObject {
         previousNum = currentNum
         operation = ope
         display = "0"
-        operationCounts[ope, default: 0] += 1
+        switch ope {
+        case "+":
+            currentSession = SessionData(
+                sessionId: currentSession.sessionId,
+                addCount: currentSession.addCount + 1,
+                subtractCount: currentSession.subtractCount,
+                multiplyCount: currentSession.multiplyCount,
+                divideCount: currentSession.divideCount,
+                lastUpdated: Date()
+            )
+        case "−":
+            currentSession = SessionData(
+                sessionId: currentSession.sessionId,
+                addCount: currentSession.addCount,
+                subtractCount: currentSession.subtractCount + 1,
+                multiplyCount: currentSession.multiplyCount,
+                divideCount: currentSession.divideCount,
+                lastUpdated: Date()
+            )
+        case "×":
+            currentSession = SessionData(
+                sessionId: currentSession.sessionId,
+                addCount: currentSession.addCount,
+                subtractCount: currentSession.subtractCount,
+                multiplyCount: currentSession.multiplyCount + 1,
+                divideCount: currentSession.divideCount,
+                lastUpdated: Date()
+            )
+        case "÷":
+            currentSession = SessionData(
+                sessionId: currentSession.sessionId,
+                addCount: currentSession.addCount,
+                subtractCount: currentSession.subtractCount,
+                multiplyCount: currentSession.multiplyCount,
+                divideCount: currentSession.divideCount + 1,
+                lastUpdated: Date()
+            )
+        default:
+            break
+        }
         saveSessionData()
     }
 
     private func calculate() {
         let result: Double
         switch operation {
-            case "+": result = previousNum + currentNum
-            case "−": result = previousNum - currentNum
-            case "×": result = previousNum * currentNum
-            case "÷": result = currentNum != 0 ? previousNum / currentNum : 0
-            default: return
+        case "+": result = previousNum + currentNum
+        case "−": result = previousNum - currentNum
+        case "×": result = previousNum * currentNum
+        case "÷": result = currentNum != 0 ? previousNum / currentNum : 0
+        default: return
         }
         display = String(result)
         currentNum = result
@@ -78,7 +133,17 @@ class CalculatorViewModel: ObservableObject {
     }
 
     private func saveSessionData() {
-        coreDataManager.saveSession(sessionId: sessionId, operations: operationCounts)
+        let operations = [
+            "+": currentSession.addCount,
+            "−": currentSession.subtractCount,
+            "×": currentSession.multiplyCount,
+            "÷": currentSession.divideCount
+        ]
+        coreDataManager.saveSession(
+            sessionId: currentSession.sessionId,
+            operations: operations,
+            lastUpdated: currentSession.lastUpdated
+        )
 
         guard let url = URL(string: "\(backendBaseURL)/api/session") else { return }
         var request = URLRequest(url: url)
@@ -86,10 +151,8 @@ class CalculatorViewModel: ObservableObject {
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         addBasicAuth(to: &request)
 
-        let data = SessionData(sessionId: sessionId, operations: operationCounts)
-
         do {
-            let jsonData = try JSONEncoder().encode(data)
+            let jsonData = try JSONEncoder().encode(currentSession)
             URLSession.shared.uploadTask(with: request, from: jsonData) { data, response, error in
                 if let error = error {
                     print("Error sending data to backend: \(error)")
@@ -112,6 +175,9 @@ class CalculatorViewModel: ObservableObject {
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         addBasicAuth(to: &request)
 
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601 // Handle string dates from backend
+
         URLSession.shared.dataTask(with: request) { data, response, error in
             if let error = error {
                 print("Error fetching sessions: \(error)")
@@ -128,10 +194,19 @@ class CalculatorViewModel: ObservableObject {
             }
 
             do {
-                let sessions = try JSONDecoder().decode([SessionData].self, from: data)
-                // Sync with CoreData
+                let sessions = try decoder.decode([SessionData].self, from: data)
                 for session in sessions {
-                    self.coreDataManager.saveSession(sessionId: session.sessionId, operations: session.operations)
+                    let operations = [
+                        "+": session.addCount,
+                        "−": session.subtractCount,
+                        "×": session.multiplyCount,
+                        "÷": session.divideCount
+                    ]
+                    self.coreDataManager.saveSession(
+                        sessionId: session.sessionId,
+                        operations: operations,
+                        lastUpdated: session.lastUpdated
+                    )
                 }
                 DispatchQueue.main.async {
                     completion(sessions)
@@ -155,7 +230,7 @@ class CalculatorViewModel: ObservableObject {
         return coreDataManager.fetchAllSessions()
     }
 
-    func getCurrentOperationCounts() -> [String: Int] {
-        return operationCounts
+    func getCurrentSessionData() -> SessionData {
+        return currentSession
     }
 }

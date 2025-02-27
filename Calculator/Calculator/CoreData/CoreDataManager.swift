@@ -24,6 +24,22 @@ class CoreDataManager {
         persistentContainer.viewContext
     }
 
+    func fetchLastUpdated(for sessionId: String) -> Date? {
+        let context = persistentContainer.viewContext
+        let fetchRequest: NSFetchRequest<SessionEntity> = SessionEntity.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "sessionId == %@", sessionId)
+        fetchRequest.fetchLimit = 1
+
+        do {
+            if let session = try context.fetch(fetchRequest).first {
+                return session.lastUpdated
+            }
+        } catch {
+            print("Error fetching last updated: \(error)")
+        }
+        return nil
+    }
+
     func saveContext() {
         let context = persistentContainer.viewContext
         if context.hasChanges {
@@ -36,7 +52,7 @@ class CoreDataManager {
         }
     }
 
-    func saveSession(sessionId: String, operations: [String: Int]) -> SessionEntity {
+    func saveSession(sessionId: String, operations: [String: Int], lastUpdated: Date? = nil) -> SessionEntity {
         let context = persistentContainer.viewContext
         let fetchRequest: NSFetchRequest<SessionEntity> = SessionEntity.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "sessionId == %@", sessionId)
@@ -56,6 +72,7 @@ class CoreDataManager {
             session.subtractCount = Int32(operations["−", default: 0])
             session.multiplyCount = Int32(operations["×", default: 0])
             session.divideCount = Int32(operations["÷", default: 0])
+            session.lastUpdated = lastUpdated ?? Date()
 
             saveContext()
             return session

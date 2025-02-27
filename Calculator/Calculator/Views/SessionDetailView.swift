@@ -13,6 +13,7 @@ struct SessionDetailView: View {
     let subtractCount: Int
     let multiplyCount: Int
     let divideCount: Int
+    let lastUpdated: Date
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -22,6 +23,8 @@ struct SessionDetailView: View {
             Text("Subtractions: \(subtractCount)")
             Text("Multiplications: \(multiplyCount)")
             Text("Divisions: \(divideCount)")
+            Text("Last Updated: \(lastUpdated, formatter: dateFormatter)")
+                .font(.caption)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding()
@@ -35,14 +38,22 @@ struct SessionDetailView: View {
         )
     }
 
+    private let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .short
+        return formatter
+    }()
+
 }
+
 // MARK: - Previews
 #Preview("Light Mode") {
-    SessionDetailView(sessionId: "550e8400-e29b-41d4-a716-446655440000", addCount: 3, subtractCount: 2, multiplyCount: 6, divideCount: 0)
+    SessionDetailView(sessionId: "550e8400-e29b-41d4-a716-446655440000", addCount: 3, subtractCount: 2, multiplyCount: 6, divideCount: 0, lastUpdated: Date())
         .preferredColorScheme(.light)
 }
 
 #Preview("Dark Mode") {
-    SessionDetailView(sessionId: "550e8400-e29b-41d4-a716-446655440000", addCount: 3, subtractCount: 2, multiplyCount: 6, divideCount: 0)
+    SessionDetailView(sessionId: "550e8400-e29b-41d4-a716-446655440000", addCount: 3, subtractCount: 2, multiplyCount: 6, divideCount: 0, lastUpdated: Date())
         .preferredColorScheme(.dark)
 }

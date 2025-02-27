@@ -2,25 +2,28 @@ package main
 
 import (
     "database/sql"
-	"time"
+    "time"
+	"log"
 )
 
 type Session struct {
-    SessionID     string `json:"sessionId"`
-    AddCount      int    `json:"operations.+"`
-    SubtractCount int    `json:"operations.−"`
-    MultiplyCount int    `json:"operations.×"`
-    DivideCount   int    `json:"operations.÷"`
-	LastUpdated   time.Time `json:"lastUpdated, omitempty"`
+    SessionID     string    `json:"sessionId"`
+    AddCount      int       `json:"addCount"`
+    SubtractCount int       `json:"subtractCount"`
+    MultiplyCount int       `json:"multiplyCount"`
+    DivideCount   int       `json:"divideCount"`
+    LastUpdated   time.Time `json:"lastUpdated,omitempty"`
 }
 
 func initDB() error {
     db, err := sql.Open("sqlite3", "./calculator.db")
     if err != nil {
+        log.Println("Error opening database:", err)
         return err
     }
     defer db.Close()
 
+    log.Println("Creating sessions table...")
     _, err = db.Exec(`
         CREATE TABLE IF NOT EXISTS sessions (
             session_id TEXT PRIMARY KEY,
@@ -28,10 +31,15 @@ func initDB() error {
             subtract_count INTEGER DEFAULT 0,
             multiply_count INTEGER DEFAULT 0,
             divide_count INTEGER DEFAULT 0,
-			last_updated DATETIME DEFAULT CURRENT_TIMESTAMP
+            last_updated DATETIME DEFAULT CURRENT_TIMESTAMP
         )
     `)
-    return err
+    if err != nil {
+        log.Println("Error creating table:", err)
+        return err
+    }
+    log.Println("Database initialized successfully")
+    return nil
 }
 
 func saveSession(db *sql.DB, session Session) error {
@@ -52,7 +60,7 @@ func saveSession(db *sql.DB, session Session) error {
         session.SubtractCount,
         session.MultiplyCount,
         session.DivideCount,
-		time.Now(),
+        time.Now(),
     )
     return err
 }

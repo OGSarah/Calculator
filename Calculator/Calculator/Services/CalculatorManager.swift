@@ -5,7 +5,8 @@
 //  Created by Sarah Clark on 2/26/25.
 //
 
-import Foundation
+// TODO: Delete this if not needed
+/*import Foundation
 
 class CalculatorManager: ObservableObject {
     private var operationCounts: [String: Int] = ["+": 0, "−": 0, "×": 0, "÷": 0]
@@ -40,3 +41,4 @@ class CalculatorManager: ObservableObject {
         }
     }
 }
+*/
