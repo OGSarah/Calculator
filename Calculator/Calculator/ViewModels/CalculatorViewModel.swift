@@ -16,6 +16,7 @@ class CalculatorViewModel: ObservableObject {
     private var operation: String = ""
     private var operationCounts: [String: Int] = ["+": 0, "−": 0, "×": 0, "÷": 0]
     private let coreDataManager = CoreDataManager.shared
+    private let backendBaseURL = "http://localhost:3000" // Adjust for physical device IP if needed
 
     init() {
         if let savedId = UserDefaults.standard.string(forKey: "sessionId") {
@@ -29,16 +30,16 @@ class CalculatorViewModel: ObservableObject {
 
     func handleButtonPress(_ value: String) {
         switch value {
-            case "0"..."9":
-                appendNumber(value)
-            case "+", "−", "×", "÷":
-                setOperation(value)
-            case "=":
-                calculate()
-            case "AC":
-                clear()
-            default:
-                break
+        case "0"..."9":
+            appendNumber(value)
+        case "+", "−", "×", "÷":
+            setOperation(value)
+        case "=":
+            calculate()
+        case "AC":
+            clear()
+        default:
+            break
         }
     }
 
@@ -79,22 +80,13 @@ class CalculatorViewModel: ObservableObject {
     private func saveSessionData() {
         coreDataManager.saveSession(sessionId: sessionId, operations: operationCounts)
 
-        guard let url = URL(string: "http://localhost:3000/api/session") else { return }
+        guard let url = URL(string: "\(backendBaseURL)/api/session") else { return }
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        addBasicAuth(to: &request)
 
-        // Add Basic Authentication
-        let authString = "admin:calculator123"
-        if let authData = authString.data(using: .utf8) {
-            let base64Auth = authData.base64EncodedString()
-            request.setValue("Basic \(base64Auth)", forHTTPHeaderField: "Authorization")
-        }
-
-        let data = SessionData(
-            sessionId: sessionId,
-            operations: operationCounts
-        )
+        let data = SessionData(sessionId: sessionId, operations: operationCounts)
 
         do {
             let jsonData = try JSONEncoder().encode(data)
@@ -107,6 +99,55 @@ class CalculatorViewModel: ObservableObject {
             }.resume()
         } catch {
             print("Error encoding data: \(error)")
+        }
+    }
+
+    func fetchAndSyncSessions(completion: @escaping ([SessionData]) -> Void) {
+        guard let url = URL(string: "\(backendBaseURL)/api/sessions") else {
+            completion([])
+            return
+        }
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        addBasicAuth(to: &request)
+
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error {
+                print("Error fetching sessions: \(error)")
+                completion([])
+                return
+            }
+
+            guard let data = data,
+                  let httpResponse = response as? HTTPURLResponse,
+                  httpResponse.statusCode == 200 else {
+                print("Invalid response from server")
+                completion([])
+                return
+            }
+
+            do {
+                let sessions = try JSONDecoder().decode([SessionData].self, from: data)
+                // Sync with CoreData
+                for session in sessions {
+                    self.coreDataManager.saveSession(sessionId: session.sessionId, operations: session.operations)
+                }
+                DispatchQueue.main.async {
+                    completion(sessions)
+                }
+            } catch {
+                print("Error decoding sessions: \(error)")
+                completion([])
+            }
+        }.resume()
+    }
+
+    private func addBasicAuth(to request: inout URLRequest) {
+        let authString = "admin:calculator123"
+        if let authData = authString.data(using: .utf8) {
+            let base64Auth = authData.base64EncodedString()
+            request.setValue("Basic \(base64Auth)", forHTTPHeaderField: "Authorization")
         }
     }
 

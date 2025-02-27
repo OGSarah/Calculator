@@ -34,8 +34,8 @@ struct SessionDetailView: View {
                 .strokeBorder(.gray.opacity(0.3), lineWidth: 1)
         )
     }
-}
 
+}
 // MARK: - Previews
 #Preview("Light Mode") {
     SessionDetailView(sessionId: "550e8400-e29b-41d4-a716-446655440000", addCount: 3, subtractCount: 2, multiplyCount: 6, divideCount: 0)

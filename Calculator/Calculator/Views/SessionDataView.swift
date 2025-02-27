@@ -8,8 +8,9 @@
 import SwiftUI
 
 struct SessionDataView: View {
-    let viewModel: CalculatorViewModel
+    @ObservedObject var viewModel: CalculatorViewModel
     @Environment(\.dismiss) var dismiss
+    @State private var sessions: [SessionData] = []
 
     var body: some View {
         NavigationView {
@@ -18,7 +19,6 @@ struct SessionDataView: View {
                     .edgesIgnoringSafeArea(.all)
 
                 VStack(spacing: 20) {
-                    // Current Session
                     Text("Current Session")
                         .font(.title)
                         .foregroundColor(.primary)
@@ -34,20 +34,19 @@ struct SessionDataView: View {
                     .background(Color(.systemGray6))
                     .cornerRadius(10)
 
-                    // Previous Sessions
                     Text("Previous Sessions")
                         .font(.title2)
                         .foregroundColor(.primary)
 
                     ScrollView {
                         LazyVStack(spacing: 15) {
-                            ForEach(viewModel.getAllSessions().filter { $0.sessionId != viewModel.sessionId }) { session in
+                            ForEach(sessions.filter { $0.sessionId != viewModel.sessionId }) { session in
                                 SessionDetailView(
-                                    sessionId: session.sessionId ?? "",
-                                    addCount: Int(session.addCount),
-                                    subtractCount: Int(session.subtractCount),
-                                    multiplyCount: Int(session.multiplyCount),
-                                    divideCount: Int(session.divideCount)
+                                    sessionId: session.sessionId,
+                                    addCount: session.operations["+", default: 0],
+                                    subtractCount: session.operations["−", default: 0],
+                                    multiplyCount: session.operations["×", default: 0],
+                                    divideCount: session.operations["÷", default: 0]
                                 )
                             }
                         }
@@ -61,6 +60,11 @@ struct SessionDataView: View {
                     Button("Close") {
                         dismiss()
                     }
+                }
+            }
+            .onAppear {
+                viewModel.fetchAndSyncSessions { fetchedSessions in
+                    self.sessions = fetchedSessions
                 }
             }
         }
