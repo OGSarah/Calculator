@@ -46,18 +46,16 @@ A simple SwiftUI calculator app that performs basic arithmetic operations and lo
 **Request Body:**
 
 ```json
-{
-  "sessionId": "string",
-  "operations": {
-    "+": number,
-    "-": number,
-    "*": number,
-    "/": number
-  }
-}
-{
-  "message": "Session data updated"
-}
+[
+    {
+        "sessionId": "string",
+        "addCount": integer,
+        "subtractCount": integer,
+        "multiplyCount": integer,
+        "divideCount": integer,
+        "lastUpdated": "string"  // ISO 8601 format, e.g., "2025-02-27T12:00:00Z"
+    }
+]
 ```
 
 **Sample Data**
