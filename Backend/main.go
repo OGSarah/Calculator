@@ -32,7 +32,7 @@ func getAllSessionsHandler(w http.ResponseWriter, r *http.Request) {
     }
     defer db.Close()
 
-    rows, err := db.Query("SELECT session_id, add_count, subtract_count, multiply_count, divide_count FROM sessions")
+    rows, err := db.Query("SELECT session_id, add_count, subtract_count, multiply_count, divide_count, last_updated FROM sessions")
     if err != nil {
         http.Error(w, "Query error", http.StatusInternalServerError)
         return
@@ -42,7 +42,7 @@ func getAllSessionsHandler(w http.ResponseWriter, r *http.Request) {
     var sessions []Session
     for rows.Next() {
         var s Session
-        err := rows.Scan(&s.SessionID, &s.AddCount, &s.SubtractCount, &s.MultiplyCount, &s.DivideCount)
+        err := rows.Scan(&s.SessionID, &s.AddCount, &s.SubtractCount, &s.MultiplyCount, &s.DivideCount, &s.LastUpdated)
         if err != nil {
             http.Error(w, "Scan error", http.StatusInternalServerError)
             return

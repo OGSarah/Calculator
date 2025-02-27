@@ -2,6 +2,7 @@ package main
 
 import (
     "database/sql"
+	"time"
 )
 
 type Session struct {
@@ -10,6 +11,7 @@ type Session struct {
     SubtractCount int    `json:"operations.−"`
     MultiplyCount int    `json:"operations.×"`
     DivideCount   int    `json:"operations.÷"`
+	LastUpdated   time.Time `json:"lastUpdated, omitempty"`
 }
 
 func initDB() error {
@@ -25,7 +27,8 @@ func initDB() error {
             add_count INTEGER DEFAULT 0,
             subtract_count INTEGER DEFAULT 0,
             multiply_count INTEGER DEFAULT 0,
-            divide_count INTEGER DEFAULT 0
+            divide_count INTEGER DEFAULT 0,
+			last_updated DATETIME DEFAULT CURRENT_TIMESTAMP
         )
     `)
     return err
@@ -35,8 +38,8 @@ func saveSession(db *sql.DB, session Session) error {
     stmt, err := db.Prepare(`
         INSERT OR REPLACE INTO sessions (
             session_id, add_count, subtract_count, 
-            multiply_count, divide_count
-        ) VALUES (?, ?, ?, ?, ?)
+            multiply_count, divide_count, last_updated
+        ) VALUES (?, ?, ?, ?, ?, ?)
     `)
     if err != nil {
         return err
@@ -49,6 +52,7 @@ func saveSession(db *sql.DB, session Session) error {
         session.SubtractCount,
         session.MultiplyCount,
         session.DivideCount,
+		time.Now(),
     )
     return err
 }
