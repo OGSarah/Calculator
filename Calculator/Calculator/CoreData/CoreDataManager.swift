@@ -86,4 +86,17 @@ class CoreDataManager {
         }
         return ["+": 0, "−": 0, "×": 0, "÷": 0]
     }
+
+    func fetchAllSessions() -> [SessionEntity] {
+        let context = persistentContainer.viewContext
+        let fetchRequest: NSFetchRequest<SessionEntity> = SessionEntity.fetchRequest()
+
+        do {
+            return try context.fetch(fetchRequest)
+        } catch {
+            print("Error fetching sessions: \(error)")
+            return []
+        }
+    }
+
 }

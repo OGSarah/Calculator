@@ -5,8 +5,8 @@
 //  Created by Sarah Clark on 2/26/25.
 //
 
-import Foundation
 import CoreData
+import Foundation
 
 class CalculatorViewModel: ObservableObject {
     @Published var display: String = "0"
@@ -29,16 +29,16 @@ class CalculatorViewModel: ObservableObject {
 
     func handleButtonPress(_ value: String) {
         switch value {
-            case "0"..."9":
-                appendNumber(value)
-            case "+", "−", "×", "÷":
-                setOperation(value)
-            case "=":
-                calculate()
-            case "AC":
-                clear()
-            default:
-                break
+        case "0"..."9":
+            appendNumber(value)
+        case "+", "−", "×", "÷":
+            setOperation(value)
+        case "=":
+            calculate()
+        case "AC":
+            clear()
+        default:
+            break
         }
     }
 
@@ -58,11 +58,11 @@ class CalculatorViewModel: ObservableObject {
     private func calculate() {
         let result: Double
         switch operation {
-            case "+": result = previousNum + currentNum
-            case "−": result = previousNum - currentNum
-            case "×": result = previousNum * currentNum
-            case "÷": result = currentNum != 0 ? previousNum / currentNum : 0
-            default: return
+        case "+": result = previousNum + currentNum
+        case "−": result = previousNum - currentNum
+        case "×": result = previousNum * currentNum
+        case "÷": result = currentNum != 0 ? previousNum / currentNum : 0
+        default: return
         }
         display = String(result)
         currentNum = result
@@ -77,10 +77,8 @@ class CalculatorViewModel: ObservableObject {
     }
 
     private func saveSessionData() {
-        // Save to CoreData
         coreDataManager.saveSession(sessionId: sessionId, operations: operationCounts)
 
-        // Send to backend
         guard let url = URL(string: "http://localhost:3000/api/session") else { return }
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -103,6 +101,14 @@ class CalculatorViewModel: ObservableObject {
         } catch {
             print("Error encoding data: \(error)")
         }
+    }
+
+    func getAllSessions() -> [SessionEntity] {
+        return coreDataManager.fetchAllSessions()
+    }
+
+    func getCurrentOperationCounts() -> [String: Int] {
+        return operationCounts
     }
 
 }
