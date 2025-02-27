@@ -11,16 +11,32 @@ struct CalculatorButton: View {
     let title: String
     let action: () -> Void
 
+    private var isOperation: Bool {
+        ["÷", "×", "−", "+", "="].contains(title)
+    }
+
+    private var backgroundColor: Color {
+        switch title {
+        case "AC": return .gray
+        case "÷", "×", "−", "+", "=": return .blue.opacity(0.8)
+        default: return .blue.opacity(0.3)
+        }
+    }
+
+    private var textColor: Color {
+        title == "AC" ? .white : .primary
+    }
+
     var body: some View {
         Button(action: action) {
             Text(title)
                 .font(.title)
+                .foregroundColor(textColor)
                 .frame(width: 80, height: 80)
-                .background(Color.blue.opacity(0.2))
+                .background(backgroundColor)
                 .cornerRadius(40)
         }
     }
-
 }
 
 // MARK: Previews

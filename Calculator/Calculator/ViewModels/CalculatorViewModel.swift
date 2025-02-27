@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import CoreData
 
 class CalculatorViewModel: ObservableObject {
     @Published var display: String = "0"
@@ -14,6 +15,7 @@ class CalculatorViewModel: ObservableObject {
     private var previousNum: Double = 0
     private var operation: String = ""
     private var operationCounts: [String: Int] = ["+": 0, "−": 0, "×": 0, "÷": 0]
+    private let coreDataManager = CoreDataManager.shared
 
     init() {
         if let savedId = UserDefaults.standard.string(forKey: "sessionId") {
@@ -22,20 +24,21 @@ class CalculatorViewModel: ObservableObject {
             sessionId = UUID().uuidString
             UserDefaults.standard.set(sessionId, forKey: "sessionId")
         }
+        operationCounts = coreDataManager.loadOperations(for: sessionId)
     }
 
     func handleButtonPress(_ value: String) {
         switch value {
-        case "0"..."9":
-            appendNumber(value)
-        case "+", "-", "×", "÷":
-            setOperation(value)
-        case "=":
-            calculate()
-        case "AC":
-            clear()
-        default:
-            break
+            case "0"..."9":
+                appendNumber(value)
+            case "+", "−", "×", "÷":
+                setOperation(value)
+            case "=":
+                calculate()
+            case "AC":
+                clear()
+            default:
+                break
         }
     }
 
@@ -55,11 +58,11 @@ class CalculatorViewModel: ObservableObject {
     private func calculate() {
         let result: Double
         switch operation {
-        case "+": result = previousNum + currentNum
-        case "−": result = previousNum - currentNum
-        case "×": result = previousNum * currentNum
-        case "÷": result = currentNum != 0 ? previousNum / currentNum : 0
-        default: return
+            case "+": result = previousNum + currentNum
+            case "−": result = previousNum - currentNum
+            case "×": result = previousNum * currentNum
+            case "÷": result = currentNum != 0 ? previousNum / currentNum : 0
+            default: return
         }
         display = String(result)
         currentNum = result
@@ -74,6 +77,10 @@ class CalculatorViewModel: ObservableObject {
     }
 
     private func saveSessionData() {
+        // Save to CoreData
+        coreDataManager.saveSession(sessionId: sessionId, operations: operationCounts)
+
+        // Send to backend
         guard let url = URL(string: "http://localhost:3000/api/session") else { return }
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -86,7 +93,13 @@ class CalculatorViewModel: ObservableObject {
 
         do {
             let jsonData = try JSONEncoder().encode(data)
-            URLSession.shared.uploadTask(with: request, from: jsonData).resume()
+            URLSession.shared.uploadTask(with: request, from: jsonData) { data, response, error in
+                if let error = error {
+                    print("Error sending data to backend: \(error)")
+                    return
+                }
+                print("Session data sent to backend successfully")
+            }.resume()
         } catch {
             print("Error encoding data: \(error)")
         }

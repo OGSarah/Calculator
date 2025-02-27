@@ -11,32 +11,50 @@ struct CalculatorView: View {
     @StateObject private var viewModel = CalculatorViewModel()
 
     var body: some View {
-        VStack(spacing: 20) {
-            Text("Session: \(viewModel.sessionId.prefix(8))...")
+        VStack {
+            Text("Session: \(viewModel.sessionId)")
                 .font(.title)
                 .foregroundColor(.gray)
-
-            Text(viewModel.display)
-                .font(.system(size: 60))
-                .lineLimit(1)
-                .minimumScaleFactor(0.5)
-                .frame(maxWidth: .infinity, alignment: .trailing)
                 .padding()
 
-            ForEach(0..<4) { row in
-                HStack(spacing: 10) {
-                    ForEach(0..<4) { col in
-                        if let button = buttonLayout[row][col] {
-                            CalculatorButton(
-                                title: button.title,
-                                action: { viewModel.handleButtonPress(button.title) }
-                            )
+            ZStack {
+                Color(.systemBackground)
+                    .edgesIgnoringSafeArea(.all)
+
+                VStack(spacing: 20) {
+                    Text(viewModel.display)
+                        .font(.system(size: 60))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.5)
+                        .frame(maxWidth: .infinity, alignment: .trailing)
+                        .padding()
+
+                    ForEach(0..<4) { row in
+                        HStack(spacing: 10) {
+                            ForEach(0..<4) { col in
+                                if let button = buttonLayout[row][col] {
+                                    CalculatorButton(
+                                        title: button.title,
+                                        action: { viewModel.handleButtonPress(button.title) }
+                                    )
+                                }
+                            }
                         }
                     }
                 }
+                .padding(20)
+                .background(
+                    .ultraThinMaterial,
+                    in: RoundedRectangle(cornerRadius: 20, style: .continuous)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 20)
+                        .strokeBorder(.gray.opacity(0.3), lineWidth: 1)
+                )
+                .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 5)
+                .padding(20)
             }
         }
-        .padding()
     }
 
     private let buttonLayout: [[ButtonConfig?]] = [
