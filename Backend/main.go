@@ -1,7 +1,7 @@
 package main
 
 import (
-    "database/sql" // Add this import
+    "database/sql" 
     "encoding/json"
     "log"
     "net/http"

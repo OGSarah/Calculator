@@ -17,7 +17,7 @@ struct SessionDetailView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Session ID: \(sessionId.prefix(8))...")
+            Text("Session ID: \(sessionId)")
                 .font(.headline)
             Text("Additions: \(addCount)")
             Text("Subtractions: \(subtractCount)")
@@ -49,11 +49,21 @@ struct SessionDetailView: View {
 
 // MARK: - Previews
 #Preview("Light Mode") {
-    SessionDetailView(sessionId: "550e8400-e29b-41d4-a716-446655440000", addCount: 3, subtractCount: 2, multiplyCount: 6, divideCount: 0, lastUpdated: Date())
+    SessionDetailView(sessionId: "550e8400-e29b-41d4-a716-446655440000",
+                      addCount: 3,
+                      subtractCount: 2,
+                      multiplyCount: 6,
+                      divideCount: 0,
+                      lastUpdated: Date())
         .preferredColorScheme(.light)
 }
 
 #Preview("Dark Mode") {
-    SessionDetailView(sessionId: "550e8400-e29b-41d4-a716-446655440000", addCount: 3, subtractCount: 2, multiplyCount: 6, divideCount: 0, lastUpdated: Date())
+    SessionDetailView(sessionId: "550e8400-e29b-41d4-a716-446655440000",
+                      addCount: 3,
+                      subtractCount: 2,
+                      multiplyCount: 6,
+                      divideCount: 0,
+                      lastUpdated: Date())
         .preferredColorScheme(.dark)
 }
