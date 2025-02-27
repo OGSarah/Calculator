@@ -5,8 +5,8 @@
 //  Created by Sarah Clark on 2/26/25.
 //
 
-import CoreData
 import Foundation
+import CoreData
 
 class CalculatorViewModel: ObservableObject {
     @Published var display: String = "0"
@@ -29,16 +29,16 @@ class CalculatorViewModel: ObservableObject {
 
     func handleButtonPress(_ value: String) {
         switch value {
-        case "0"..."9":
-            appendNumber(value)
-        case "+", "−", "×", "÷":
-            setOperation(value)
-        case "=":
-            calculate()
-        case "AC":
-            clear()
-        default:
-            break
+            case "0"..."9":
+                appendNumber(value)
+            case "+", "−", "×", "÷":
+                setOperation(value)
+            case "=":
+                calculate()
+            case "AC":
+                clear()
+            default:
+                break
         }
     }
 
@@ -58,11 +58,11 @@ class CalculatorViewModel: ObservableObject {
     private func calculate() {
         let result: Double
         switch operation {
-        case "+": result = previousNum + currentNum
-        case "−": result = previousNum - currentNum
-        case "×": result = previousNum * currentNum
-        case "÷": result = currentNum != 0 ? previousNum / currentNum : 0
-        default: return
+            case "+": result = previousNum + currentNum
+            case "−": result = previousNum - currentNum
+            case "×": result = previousNum * currentNum
+            case "÷": result = currentNum != 0 ? previousNum / currentNum : 0
+            default: return
         }
         display = String(result)
         currentNum = result
@@ -83,6 +83,13 @@ class CalculatorViewModel: ObservableObject {
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        // Add Basic Authentication
+        let authString = "admin:calculator123"
+        if let authData = authString.data(using: .utf8) {
+            let base64Auth = authData.base64EncodedString()
+            request.setValue("Basic \(base64Auth)", forHTTPHeaderField: "Authorization")
+        }
 
         let data = SessionData(
             sessionId: sessionId,
@@ -110,5 +117,4 @@ class CalculatorViewModel: ObservableObject {
     func getCurrentOperationCounts() -> [String: Int] {
         return operationCounts
     }
-
 }
