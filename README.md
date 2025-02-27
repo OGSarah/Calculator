@@ -10,7 +10,7 @@ A simple SwiftUI calculator app that performs basic arithmetic operations and lo
 ### iOS App:
 1. Open `Calculator.xcodeproj` in Xcode.
 2. Under `Signing & Capabilities` change the Team value to your development team.
-3. Build and run on a simulator or device.
+3. Build and run on the iOS simulator.
 
 ### Backend:
 1. Install Go (1.21+): `brew install go` (macOS)
