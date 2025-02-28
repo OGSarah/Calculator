@@ -7,7 +7,7 @@
 
 import CoreData
 import Foundation
-
+import SwiftUI
 
 class CalculatorViewModel: ObservableObject {
     @Published var display: String = "0"
@@ -21,18 +21,7 @@ class CalculatorViewModel: ObservableObject {
     private let backendBaseURL = "http://localhost:3000"
 
     init() {
-        if let savedId = UserDefaults.standard.string(forKey: "sessionId") {
-            sessionId = savedId
-            let operations = coreDataManager.loadOperations(for: sessionId)
-            currentSession = SessionData(
-                sessionId: sessionId,
-                addCount: operations["+", default: 0],
-                subtractCount: operations["−", default: 0],
-                multiplyCount: operations["×", default: 0],
-                divideCount: operations["÷", default: 0],
-                lastUpdated: coreDataManager.fetchLastUpdated(for: sessionId) ?? Date()
-            )
-        } else {
+            // Always create a new session ID on app launch per the project requirements.
             sessionId = UUID().uuidString
             UserDefaults.standard.set(sessionId, forKey: "sessionId")
             currentSession = SessionData(
@@ -43,7 +32,8 @@ class CalculatorViewModel: ObservableObject {
                 divideCount: 0,
                 lastUpdated: Date()
             )
-        }
+            // Clear any previous UserDefaults value if it exists.
+            UserDefaults.standard.removeObject(forKey: "sessionId")
     }
 
     func handleButtonPress(_ value: String) {
@@ -124,7 +114,7 @@ class CalculatorViewModel: ObservableObject {
         default: return
         }
 
-        // Update history with full calculation before showing result
+        // Update history with full calculation before showing result.
         calculationHistory = "\(previousNum) \(operation) \(currentNum) ="
         display = String(result)
         currentNum = result
@@ -225,6 +215,7 @@ class CalculatorViewModel: ObservableObject {
         }.resume()
     }
 
+    // Note: In a dev or production environment, there would not be a hardcoded username and password.
     private func addBasicAuth(to request: inout URLRequest) {
         let authString = "admin:calculator123"
         if let authData = authString.data(using: .utf8) {
