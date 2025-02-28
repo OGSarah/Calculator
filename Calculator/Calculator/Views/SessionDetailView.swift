@@ -18,7 +18,7 @@ struct SessionDetailView: View {
             HStack {
                 Text(title)
                     .font(.headline)
-                    .foregroundColor(isCurrent ? .accentColor : .primary)
+                    .foregroundColor(isCurrent ? .purple.opacity(0.6) : .primary)
                 Spacer()
                 Text(dateFormatter.string(from: session.lastUpdated))
                     .font(.caption)
@@ -44,10 +44,10 @@ struct SessionDetailView: View {
         }
         .padding()
         .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color(.systemBackground))
-                .shadow(color: .black.opacity(0.05), radius: 5, x: 0, y: 2)
+            .ultraThinMaterial,
+            in: RoundedRectangle(cornerRadius: 20, style: .continuous)
         )
+        .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 5)
         .padding(.horizontal, 14)
     }
 

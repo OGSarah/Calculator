@@ -28,6 +28,7 @@ struct CalculatorView: View {
             SessionDataView(viewModel: viewModel)
                 .presentationDetents([.large])
         }
+        .padding(20)
     }
 
     private var sessionButton: some View {
@@ -57,7 +58,7 @@ struct CalculatorView: View {
                 displayText
                 buttonGrid
             }
-            .padding(20)
+            .padding(15)
             .background(
                 .ultraThinMaterial,
                 in: RoundedRectangle(cornerRadius: 20, style: .continuous)
@@ -67,7 +68,7 @@ struct CalculatorView: View {
                     .strokeBorder(.gray.opacity(0.3), lineWidth: 1)
             )
             .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 5)
-            .padding(20)
+            .padding(10)
         }
     }
 

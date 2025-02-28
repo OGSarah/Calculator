@@ -23,7 +23,6 @@ struct SessionDataView: View {
     var body: some View {
         NavigationStack {
             List {
-                // Current Session Section
                 Section {
                     SessionDetailView(
                         title: "Current Session",
@@ -34,8 +33,6 @@ struct SessionDataView: View {
                     .listRowBackground(Color(.systemBackground))
                     .listRowInsets(EdgeInsets(top: 8, leading: 0, bottom: 8, trailing: 0))
                 }
-
-                // Previous Sessions Section
                 Section(header: Text("Previous Sessions")
                     .font(.subheadline)
                     .foregroundColor(.secondary)) {
@@ -44,10 +41,11 @@ struct SessionDataView: View {
                                 .frame(maxWidth: .infinity)
                                 .listRowBackground(Color(.systemBackground))
                         } else if sessions.filter({ $0.sessionId != viewModel.sessionId }).isEmpty {
-                            Text("No previous sessions")
-                                .foregroundColor(.secondary)
-                                .frame(maxWidth: .infinity)
-                                .listRowBackground(Color(.systemBackground))
+                            ContentUnavailableView {
+                                Label("No Previous Sessions", systemImage: "timer")
+                            } description: {
+                                Text("Previous sessions you have created will appear here.")
+                            }
                         } else {
                             ForEach(sessions.filter { $0.sessionId != viewModel.sessionId }) { session in
                                 SessionDetailView(
