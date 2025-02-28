@@ -14,11 +14,12 @@ A simple SwiftUI calculator app that performs basic arithmetic operations and lo
 
 ### Backend:
 1. Install Go (1.21+): `brew install go` (macOS)
-2. Navigate to `backend/`
-3. Run `go mod tidy` to install dependencies
-4. Run `go run main.go` to start the server on `http://localhost:3000`
+2. Navigate to `cd Calculator/backend`
+3. Run `go mod tidy` to install dependencies.
+5. Run `go run *.go` to start the server on `http://localhost:3000`
 
 ## Requirements:
+- macOS
 - Xcode 16.2
 - iOS 17.0+
 - Go 1.21+
@@ -45,18 +46,16 @@ A simple SwiftUI calculator app that performs basic arithmetic operations and lo
 **Request Body:**
 
 ```json
-{
-  "sessionId": "string",
-  "operations": {
-    "+": number,
-    "-": number,
-    "*": number,
-    "/": number
-  }
-}
-{
-  "message": "Session data updated"
-}
+[
+    {
+        "sessionId": "string",
+        "addCount": integer,
+        "subtractCount": integer,
+        "multiplyCount": integer,
+        "divideCount": integer,
+        "lastUpdated": "string"  // ISO 8601 format, e.g., "2025-02-27T12:00:00Z"
+    }
+]
 ```
 
 **Sample Data**
