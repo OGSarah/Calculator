@@ -8,62 +8,106 @@
 import SwiftUI
 
 struct SessionDetailView: View {
-    let sessionId: String
-    let addCount: Int
-    let subtractCount: Int
-    let multiplyCount: Int
-    let divideCount: Int
-    let lastUpdated: Date
+    let title: String
+    let session: SessionData
+    let dateFormatter: DateFormatter
+    let isCurrent: Bool
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Session ID: \(sessionId)")
-                .font(.headline)
-            Text("Additions: \(addCount)")
-            Text("Subtractions: \(subtractCount)")
-            Text("Multiplications: \(multiplyCount)")
-            Text("Divisions: \(divideCount)")
-            Text("Last Updated: \(lastUpdated, formatter: dateFormatter)")
-                .font(.caption)
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Text(title)
+                    .font(.headline)
+                    .foregroundColor(isCurrent ? .accentColor : .primary)
+                Spacer()
+                Text(dateFormatter.string(from: session.lastUpdated))
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+
+            Grid(alignment: .leading, horizontalSpacing: 20, verticalSpacing: 8) {
+                GridRow {
+                    statView(label: "Additions", value: session.addCount, symbol: "+")
+                    statView(label: "Subtractions", value: session.subtractCount, symbol: "−")
+                }
+                GridRow {
+                    statView(label: "Multiplications", value: session.multiplyCount, symbol: "×")
+                    statView(label: "Divisions", value: session.divideCount, symbol: "÷")
+                }
+            }
+            .padding(.vertical, 4)
+
+            Text("Session ID: \(session.sessionId)")
+                .font(.caption2)
+                .foregroundColor(.secondary)
+                .lineLimit(1)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
         .padding()
         .background(
-            .ultraThinMaterial,
-            in: RoundedRectangle(cornerRadius: 10, style: .continuous)
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color(.systemBackground))
+                .shadow(color: .black.opacity(0.05), radius: 5, x: 0, y: 2)
         )
-        .overlay(
-            RoundedRectangle(cornerRadius: 10)
-                .strokeBorder(.gray.opacity(0.3), lineWidth: 1)
-        )
+        .padding(.horizontal, 14)
     }
 
-    private let dateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .medium
-        formatter.timeStyle = .short
-        return formatter
-    }()
-
+    private func statView(label: String, value: Int, symbol: String) -> some View {
+        HStack(spacing: 4) {
+            Text(symbol)
+                .font(.system(size: 14, weight: .medium))
+                .foregroundColor(.secondary)
+            Text("\(value)")
+                .font(.system(size: 14, weight: .semibold))
+            Text(label)
+                .font(.system(size: 14))
+                .foregroundColor(.secondary)
+        }
+    }
 }
 
 // MARK: - Previews
 #Preview("Light Mode") {
-    SessionDetailView(sessionId: "550e8400-e29b-41d4-a716-446655440000",
-                      addCount: 3,
-                      subtractCount: 2,
-                      multiplyCount: 6,
-                      divideCount: 0,
-                      lastUpdated: Date())
-        .preferredColorScheme(.light)
+    SessionDetailView(
+        title: "Session",
+        session: SessionData(
+            sessionId: "550e8400-e29b-41d4-a716-446655440000",
+            addCount: 3,
+            subtractCount: 2,
+            multiplyCount: 6,
+            divideCount: 0,
+            lastUpdated: Date()
+        ),
+        dateFormatter: {
+            let formatter = DateFormatter()
+            formatter.dateStyle = .medium
+            formatter.timeStyle = .short
+            return formatter
+        }(),
+        isCurrent: true
+    )
+    .preferredColorScheme(.light)
+    .frame(maxWidth: 400)
 }
 
 #Preview("Dark Mode") {
-    SessionDetailView(sessionId: "550e8400-e29b-41d4-a716-446655440000",
-                      addCount: 3,
-                      subtractCount: 2,
-                      multiplyCount: 6,
-                      divideCount: 0,
-                      lastUpdated: Date())
-        .preferredColorScheme(.dark)
+    SessionDetailView(
+        title: "Session",
+        session: SessionData(
+            sessionId: "550e8400-e29b-41d4-a716-446655440000",
+            addCount: 3,
+            subtractCount: 2,
+            multiplyCount: 6,
+            divideCount: 0,
+            lastUpdated: Date()
+        ),
+        dateFormatter: {
+            let formatter = DateFormatter()
+            formatter.dateStyle = .medium
+            formatter.timeStyle = .short
+            return formatter
+        }(),
+        isCurrent: false
+    )
+    .preferredColorScheme(.dark)
+    .frame(maxWidth: 400)
 }

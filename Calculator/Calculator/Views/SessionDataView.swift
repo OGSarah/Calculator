@@ -11,67 +11,83 @@ struct SessionDataView: View {
     @ObservedObject var viewModel: CalculatorViewModel
     @Environment(\.dismiss) var dismiss
     @State private var sessions: [SessionData] = []
+    @State private var isLoading = false
+
+    private let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .short
+        return formatter
+    }()
 
     var body: some View {
-        NavigationView {
-            ZStack {
-                Color(.systemBackground)
-                    .edgesIgnoringSafeArea(.all)
-
-                VStack(spacing: 20) {
-                    Text("Current Session")
-                        .font(.title)
-                        .foregroundColor(.primary)
-
+        NavigationStack {
+            List {
+                // Current Session Section
+                Section {
                     SessionDetailView(
-                        sessionId: viewModel.sessionId,
-                        addCount: viewModel.getCurrentSessionData().addCount,
-                        subtractCount: viewModel.getCurrentSessionData().subtractCount,
-                        multiplyCount: viewModel.getCurrentSessionData().multiplyCount,
-                        divideCount: viewModel.getCurrentSessionData().divideCount,
-                        lastUpdated: viewModel.getCurrentSessionData().lastUpdated
+                        title: "Current Session",
+                        session: viewModel.getCurrentSessionData(),
+                        dateFormatter: dateFormatter,
+                        isCurrent: true
                     )
-                    .padding()
-                    .background(Color(.systemGray6))
-                    .cornerRadius(10)
+                    .listRowBackground(Color(.systemBackground))
+                    .listRowInsets(EdgeInsets(top: 8, leading: 0, bottom: 8, trailing: 0))
+                }
 
-                    Text("Previous Sessions")
-                        .font(.title2)
-                        .foregroundColor(.primary)
-
-                    ScrollView {
-                        LazyVStack(spacing: 15) {
+                // Previous Sessions Section
+                Section(header: Text("Previous Sessions")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)) {
+                        if isLoading {
+                            ProgressView()
+                                .frame(maxWidth: .infinity)
+                                .listRowBackground(Color(.systemBackground))
+                        } else if sessions.filter({ $0.sessionId != viewModel.sessionId }).isEmpty {
+                            Text("No previous sessions")
+                                .foregroundColor(.secondary)
+                                .frame(maxWidth: .infinity)
+                                .listRowBackground(Color(.systemBackground))
+                        } else {
                             ForEach(sessions.filter { $0.sessionId != viewModel.sessionId }) { session in
                                 SessionDetailView(
-                                    sessionId: session.sessionId,
-                                    addCount: session.addCount,
-                                    subtractCount: session.subtractCount,
-                                    multiplyCount: session.multiplyCount,
-                                    divideCount: session.divideCount,
-                                    lastUpdated: session.lastUpdated
+                                    title: "Session",
+                                    session: session,
+                                    dateFormatter: dateFormatter,
+                                    isCurrent: false
                                 )
+                                .transition(.opacity)
                             }
+                            .listRowBackground(Color(.systemBackground))
+                            .listRowInsets(EdgeInsets(top: 8, leading: 0, bottom: 8, trailing: 0))
                         }
                     }
-                }
-                .padding()
             }
-            .navigationTitle("Session Data")
+            .scrollContentBackground(.hidden)
+            .background(Color(.systemGroupedBackground))
+            .navigationTitle("Calculator Session History")
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Close") {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Done") {
                         dismiss()
                     }
+                    .fontWeight(.semibold)
                 }
             }
             .onAppear {
+                withAnimation {
+                    isLoading = true
+                }
                 viewModel.fetchAndSyncSessions { fetchedSessions in
-                    self.sessions = fetchedSessions
+                    withAnimation(.easeInOut) {
+                        self.sessions = fetchedSessions
+                        self.isLoading = false
+                    }
                 }
             }
         }
     }
-
 }
 
 #Preview("Light Mode") {
