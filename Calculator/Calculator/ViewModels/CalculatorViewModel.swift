@@ -5,14 +5,16 @@
 //  Created by Sarah Clark on 2/26/25.
 //
 
-import Foundation
 import CoreData
+import Foundation
+
 
 class CalculatorViewModel: ObservableObject {
     @Published var display: String = "0"
+    @Published var calculationHistory: String = ""
     let sessionId: String
-    private var currentNum: Double = 0
-    private var previousNum: Double = 0
+    private var currentNum: Int = 0
+    private var previousNum: Int = 0
     private var operation: String = ""
     private var currentSession: SessionData
     private let coreDataManager = CoreDataManager.shared
@@ -61,12 +63,13 @@ class CalculatorViewModel: ObservableObject {
 
     private func appendNumber(_ num: String) {
         display = (display == "0" ? "" : display) + num
-        currentNum = Double(display) ?? 0
+        currentNum = Int(display) ?? 0
     }
 
     private func setOperation(_ ope: String) {
         previousNum = currentNum
         operation = ope
+        calculationHistory = "\(previousNum) \(ope)"
         display = "0"
         switch ope {
         case "+":
@@ -112,7 +115,7 @@ class CalculatorViewModel: ObservableObject {
     }
 
     private func calculate() {
-        let result: Double
+        let result: Int
         switch operation {
         case "+": result = previousNum + currentNum
         case "−": result = previousNum - currentNum
@@ -120,6 +123,9 @@ class CalculatorViewModel: ObservableObject {
         case "÷": result = currentNum != 0 ? previousNum / currentNum : 0
         default: return
         }
+
+        // Update history with full calculation before showing result
+        calculationHistory = "\(previousNum) \(operation) \(currentNum) ="
         display = String(result)
         currentNum = result
         operation = ""
@@ -127,6 +133,7 @@ class CalculatorViewModel: ObservableObject {
 
     private func clear() {
         display = "0"
+        calculationHistory = ""
         currentNum = 0
         previousNum = 0
         operation = ""

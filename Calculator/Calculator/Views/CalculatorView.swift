@@ -52,7 +52,8 @@ struct CalculatorView: View {
             Color(.systemBackground)
                 .edgesIgnoringSafeArea(.all)
 
-            VStack(spacing: 20) {
+            VStack(spacing: 10) {
+                historyText
                 displayText
                 buttonGrid
             }
@@ -68,6 +69,15 @@ struct CalculatorView: View {
             .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 5)
             .padding(20)
         }
+    }
+
+    private var historyText: some View {
+        Text(viewModel.calculationHistory)
+            .font(.system(size: 30))
+            .foregroundColor(.gray)
+            .lineLimit(1)
+            .minimumScaleFactor(0.5)
+            .frame(maxWidth: .infinity, alignment: .trailing)
     }
 
     private var displayText: some View {
