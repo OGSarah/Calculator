@@ -22,8 +22,11 @@ class CalculatorViewModel: ObservableObject {
 
     init() {
             // Always create a new session ID on app launch per the project requirements.
-        // TODO: Remove later.
-            //coreDataManager.clearAllSessions()
+
+#if DEBUG
+            // Only needing for testing.
+            // coreDataManager.deleteAllSessionsInCoreData()
+#endif
             sessionId = UUID().uuidString
             UserDefaults.standard.set(sessionId, forKey: "sessionId")
             currentSession = SessionData(

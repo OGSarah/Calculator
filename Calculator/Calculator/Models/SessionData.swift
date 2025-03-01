@@ -23,7 +23,7 @@ struct SessionData: Codable, Identifiable {
         case sessionId, addCount, subtractCount, multiplyCount, divideCount, lastUpdated
     }
 
-    init(sessionId:String, addCount: Int, subtractCount: Int, multiplyCount: Int, divideCount: Int, lastUpdated: Date) {
+    init(sessionId: String, addCount: Int, subtractCount: Int, multiplyCount: Int, divideCount: Int, lastUpdated: Date) {
         self.sessionId = sessionId
         self.addCount = addCount
         self.subtractCount = subtractCount

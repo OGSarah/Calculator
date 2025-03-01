@@ -119,9 +119,9 @@ class CoreDataManager {
         }
     }
 
-    #if DEBUG
+#if DEBUG
     // For testing purposes only.
-    func clearAllSessions() {
+    func deleteAllSessionsInCoreData() {
         let context = persistentContainer.viewContext
         let fetchRequest: NSFetchRequest<NSFetchRequestResult> = SessionEntity.fetchRequest()
         let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
@@ -134,6 +134,6 @@ class CoreDataManager {
             print("Error clearing sessions: \(error)")
         }
     }
-    #endif
+#endif
 
 }
