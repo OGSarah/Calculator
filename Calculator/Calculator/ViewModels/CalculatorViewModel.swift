@@ -147,7 +147,10 @@ class CalculatorViewModel: ObservableObject {
     }
 
     func syncSessionDataToBackend() {
-        guard let url = URL(string: "\(backendBaseURL)/api/session") else { return }
+        guard let url = URL(string: "\(backendBaseURL)/api/session") else {
+            print("Invalid URL: \(backendBaseURL)/api/session")
+            return
+        }
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -155,15 +158,23 @@ class CalculatorViewModel: ObservableObject {
 
         do {
             let jsonData = try JSONEncoder().encode(currentSession)
+            print("Sending session data: \(String(data: jsonData, encoding: .utf8) ?? "Unable to decode")")
             URLSession.shared.uploadTask(with: request, from: jsonData) { data, response, error in
                 if let error = error {
-                    print("Error sending data to backend: \(error)")
+                    print("Network error: \(error.localizedDescription)")
                     return
                 }
-                print("Session data sent to backend successfully")
+                if let httpResponse = response as? HTTPURLResponse {
+                    print("Backend response status: \(httpResponse.statusCode)")
+                    if let responseData = data, let responseString = String(data: responseData, encoding: .utf8) {
+                        print("Backend response body: \(responseString)")
+                    }
+                } else {
+                    print("No valid HTTP response received")
+                }
             }.resume()
         } catch {
-            print("Error encoding data: \(error)")
+            print("Error encoding session data: \(error)")
         }
     }
 
