@@ -20,7 +20,7 @@ struct SessionDetailView: View {
                     .font(.headline)
                     .foregroundColor(isCurrent ? .purple.opacity(0.6) : .primary)
                 Spacer()
-                Text(dateFormatter.string(from: session.lastUpdated))
+                Text(dateFormatter.string(from: dateFormatter.date(from: session.lastUpdated) ?? Date()))
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
