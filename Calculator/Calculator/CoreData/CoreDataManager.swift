@@ -108,6 +108,9 @@ class CoreDataManager {
         let context = persistentContainer.viewContext
         let fetchRequest: NSFetchRequest<SessionEntity> = SessionEntity.fetchRequest()
 
+        let sortDescriptor = NSSortDescriptor(key: "lastUpdated", ascending: false)
+        fetchRequest.sortDescriptors = [sortDescriptor]
+
         do {
             return try context.fetch(fetchRequest)
         } catch {
