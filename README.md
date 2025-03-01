@@ -104,13 +104,13 @@ Here are some screenshots showcasing the app's features:
 - Creates a new session each time the app launches.
 
 ## Back-end Technical Details
-- Written in Go.
+- Written in Go
 - Uses the Gin web framework for HTTP routing.
 - Stores data in an SQLite database located at Backend/calculator.db.
 - Implements basic authentication with hardcoded credentials (only done for this sample project, not something that would be done in development or production environments), though not currently applied to routes.
 - Provides two endpoints:
-  - POST /api/session: Saves session data to the database.
-  - GET /api/sessions: Retrieves all stored sessions.
+  - POST /api/session: Saves session data to the database
+  - GET /api/sessions: Retrieves all stored sessions
 
 
 
