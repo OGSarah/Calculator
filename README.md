@@ -15,7 +15,7 @@ A simple SwiftUI calculator app that performs basic arithmetic operations and lo
 
 ### Backend:
 1. Install Go (1.21+): `brew install go` (macOS)
-2. Navigate to `cd Calculator/backend`
+2. Navigate to `cd Backend`
 3. Run `go mod tidy` to install dependencies.
 5. Run `go run *.go` to start the server on `http://localhost:3000`
 
@@ -25,7 +25,7 @@ A simple SwiftUI calculator app that performs basic arithmetic operations and lo
 3. Build and run on the iOS simulator. (Cannot be run on a real device because of the server local ip address. In a production scenario, the server would be publically accessible. In a dev environment, the server would be internally accessible.)
 4. Perform a calculation or two. 
 5. Once you swipe the app so that it goes into the background, you will see a message in the Xcode debug console, in the terminal where you started the backend server, and the backend SQLite `Calculator.db` will be updated.
-6. You can view past sessions by selecting the `View Session Data` in the app; it will show the current session and the previous sessions in descending order by date created.
+6. You can view past sessions by selecting the `View Session Data` in the app; it will show the current session and the previous sessions in descending order by last updated date.
 
 ## Deliverables
 
@@ -49,27 +49,27 @@ A simple SwiftUI calculator app that performs basic arithmetic operations and lo
 **Request Body:**
 
 ```json
-[
-    {
-        "sessionId": "string",
-        "addCount": integer,
-        "subtractCount": integer,
-        "multiplyCount": integer,
-        "divideCount": integer,
-        "lastUpdated": "string"  // ISO 8601 format, e.g., "2025-02-27T12:00:00Z"
-    }
-]
+  {
+      "sessionId": "string",
+      "addCount": integer,
+      "subtractCount": integer,
+      "multiplyCount": integer,
+      "divideCount": integer,
+      "lastUpdated": "string"  // ISO 8601 format, e.g., "2025-02-27T12:00:00Z"
+  }
 ```
 
 **Sample Data**
 
 ``` json
-  "session_id": "550e8400-e29b-41d4-a716-446655440000",
-  "add_count": 3,
-  "subtract_count": 1,
-  "multiply_count": 2,
-  "divide_count": 0,
-  "last_updated": "2025-02-26 10:00:00"
+{
+    "sessionId": "550e8400-e29b-41d4-a716-446655440000",
+    "addCount": 3,
+    "subtractCount": 1,
+    "multiplyCount": 2,
+    "divideCount": 0,
+    "lastUpdated": "2025-02-26T10:00:00Z"
+}
 ```
 
 ## Front-end Technical Details
@@ -82,8 +82,5 @@ A simple SwiftUI calculator app that performs basic arithmetic operations and lo
 ## Back-end Technical Details
 - GO
 - SQLite
-- The backend stores data in `backend/calculator.db`
-
-
-
+- The backend stores data in `Backend/calculator.db`
 
