@@ -23,6 +23,9 @@ A simple SwiftUI calculator app that performs basic arithmetic operations and lo
 1. Open `Calculator.xcodeproj` in Xcode.
 2. Under `Signing & Capabilities` change the Team value to your development team.
 3. Build and run on the iOS simulator. (Cannot be run on a real device because of the server local ip address. In a production scenario, the server would be publically accessible. In a dev environment, the server would be internally accessible.)
+4. Perform a calculation or two. 
+5. Once you swipe the app so that it goes into the background, you will see a message in the Xcode debug console, in the terminal where you started the backend server, and the backend SQLite `Calculator.db` will be updated.
+6. You can view past sessions by selecting the `View Session Data` in the app; it will show the current session and the previous sessions in descending order by date created.
 
 ## Deliverables
 
