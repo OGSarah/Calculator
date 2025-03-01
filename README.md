@@ -3,7 +3,7 @@
   <h1 style="display: inline-block; vertical-align: middle;">Calculator</h1>
 </div>
 
-A simple SwiftUI calculator app that performs basic arithmetic operations and logs session data to a backend database.
+A simple SwiftUI calculator app that performs basic arithmetic operations, logs session data to a Go server and SQLite database, and stores sessions locally on the iOS device using Core Data.
 
 ## Screenshots:
 
@@ -11,10 +11,10 @@ Here are some screenshots showcasing the app's features:
 
 <div align="center">
   <div style="border: 2px solid white; border-radius: 10px;">
-    <img width="20%" src="https://raw.githubusercontent.com/Pearljam66/Workout/main/screenshots/calculatorscreen_dark.png">
-    <img width="20%" src="https://raw.githubusercontent.com/Pearljam66/Workout/main/screenshots/calculatorscreen_light.png">
-    <img width="20%" src="https://raw.githubusercontent.com/Pearljam66/Workout/main/screenshots/nosessionhistory_dark.png">
-    <img width="20%" src="https://raw.githubusercontent.com/Pearljam66/Workout/main/screenshots/nosessionhistory_light.png">
+    <img width="20%" src="https://raw.githubusercontent.com/Pearljam66/Calculator/main/Screenshots/calculatorscreen_dark.png">
+    <img width="20%" src="https://raw.githubusercontent.com/Pearljam66/Calculator/main/Screenshots/calculatorscreen_light.png">
+    <img width="20%" src="https://raw.githubusercontent.com/Pearljam66/Calculator/main/Screenshots/nosessionhistory_dark.png">
+    <img width="20%" src="https://raw.githubusercontent.com/Pearljam66/Calculator/main/Screenshots/nosessionhistory_light.png">
   </div>
 </div>
 
@@ -22,8 +22,8 @@ Here are some screenshots showcasing the app's features:
 
 <div align="center">
   <div style="border: 2px solid white; border-radius: 10px;">
-    <img width="20%" src="https://raw.githubusercontent.com/Pearljam66/Workout/main/screenshots/sessionhistory_dark.png">
-    <img width="20%" src="https://raw.githubusercontent.com/Pearljam66/Workout/main/screenshots/sessionhistory_light.png">
+    <img width="20%" src="https://raw.githubusercontent.com/Pearljam66/Calculator/main/Screenshots/sessionhistory_dark.png">
+    <img width="20%" src="https://raw.githubusercontent.com/Pearljam66/Calculator/main/Screenshots/sessionhistory_light.png">
   </div>
 </div>
 
@@ -95,14 +95,22 @@ Here are some screenshots showcasing the app's features:
 ```
 
 ## Front-end Technical Details
+- Written in Swift
 - iOS
 - SwiftUI
 - MVVM Architecture
-- Swiftlint
-- Persists data locally via CoreData and syncs with the backend
+- SwiftLint
+- Persists data locally via Core Data and sends each session’s data to the backend once the app is about to go into the background.
+- Creates a new session each time the app launches.
 
 ## Back-end Technical Details
-- GO
-- SQLite
-- The backend stores data in `Backend/calculator.db`
+- Written in Go.
+- Uses the Gin web framework for HTTP routing.
+- Stores data in an SQLite database located at Backend/calculator.db.
+- Implements basic authentication with hardcoded credentials (only done for this sample project, not something that would be done in development or production environments), though not currently applied to routes.
+- Provides two endpoints:
+  - POST /api/session: Saves session data to the database.
+  - GET /api/sessions: Retrieves all stored sessions.
+
+
 
