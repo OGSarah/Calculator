@@ -22,6 +22,8 @@ class CalculatorViewModel: ObservableObject {
 
     init() {
             // Always create a new session ID on app launch per the project requirements.
+        // TODO: Remove later.
+            //coreDataManager.clearAllSessions()
             sessionId = UUID().uuidString
             UserDefaults.standard.set(sessionId, forKey: "sessionId")
             currentSession = SessionData(
@@ -101,7 +103,7 @@ class CalculatorViewModel: ObservableObject {
         default:
             break
         }
-        saveSessionData()
+        saveSessionDataToCoreData()
     }
 
     private func calculate() {
@@ -129,7 +131,8 @@ class CalculatorViewModel: ObservableObject {
         operation = ""
     }
 
-    private func saveSessionData() {
+    // Save to Core Data only
+    private func saveSessionDataToCoreData() {
         let operations = [
             "+": currentSession.addCount,
             "−": currentSession.subtractCount,
@@ -141,7 +144,9 @@ class CalculatorViewModel: ObservableObject {
             operations: operations,
             lastUpdated: currentSession.lastUpdated
         )
+    }
 
+    func syncSessionDataToBackend() {
         guard let url = URL(string: "\(backendBaseURL)/api/session") else { return }
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -215,7 +220,7 @@ class CalculatorViewModel: ObservableObject {
         }.resume()
     }
 
-    // Note: In a dev or production environment, there would not be a hardcoded username and password.
+    // In a dev or production environment, there would not be a hardcoded username and password.
     private func addBasicAuth(to request: inout URLRequest) {
         let authString = "admin:calculator123"
         if let authData = authString.data(using: .utf8) {

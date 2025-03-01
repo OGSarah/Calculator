@@ -77,15 +77,25 @@ struct SessionDataView: View {
                 withAnimation {
                     isLoading = true
                 }
-                viewModel.fetchAndSyncSessions { fetchedSessions in
-                    withAnimation(.easeInOut) {
-                        self.sessions = fetchedSessions
-                        self.isLoading = false
-                    }
+                let coreDataSessions = viewModel.getAllSessions()
+                let convertedSessions = coreDataSessions.map { entity in
+                    SessionData(
+                        sessionId: entity.sessionId ?? String(),
+                        addCount: Int(entity.addCount),
+                        subtractCount: Int(entity.subtractCount),
+                        multiplyCount: Int(entity.multiplyCount),
+                        divideCount: Int(entity.divideCount),
+                        lastUpdated: entity.lastUpdated ?? Date()
+                    )
+                }
+                withAnimation(.easeInOut) {
+                    self.sessions = convertedSessions
+                    self.isLoading = false
                 }
             }
         }
     }
+
 }
 
 #Preview("Light Mode") {

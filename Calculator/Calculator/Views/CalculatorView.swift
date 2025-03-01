@@ -29,6 +29,9 @@ struct CalculatorView: View {
                 .presentationDetents([.large])
         }
         .padding(20)
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)) { _ in
+            viewModel.syncSessionDataToBackend() // Sync when app goes to background
+        }
     }
 
     private var sessionButton: some View {
