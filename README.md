@@ -5,6 +5,28 @@
 
 A simple SwiftUI calculator app that performs basic arithmetic operations and logs session data to a backend database.
 
+## Screenshots:
+
+Here are some screenshots showcasing the app's features:
+
+<div align="center">
+  <div style="border: 2px solid white; border-radius: 10px;">
+    <img width="20%" src="https://raw.githubusercontent.com/Pearljam66/Workout/main/screenshots/calculatorscreen_dark.png">
+    <img width="20%" src="https://raw.githubusercontent.com/Pearljam66/Workout/main/screenshots/calculatorscreen_light.png">
+    <img width="20%" src="https://raw.githubusercontent.com/Pearljam66/Workout/main/screenshots/nosessionhistory_dark.png">
+    <img width="20%" src="https://raw.githubusercontent.com/Pearljam66/Workout/main/screenshots/nosessionhistory_light.png">
+  </div>
+</div>
+
+<br><br> 
+
+<div align="center">
+  <div style="border: 2px solid white; border-radius: 10px;">
+    <img width="20%" src="https://raw.githubusercontent.com/Pearljam66/Workout/main/screenshots/sessionhistory_dark.png">
+    <img width="20%" src="https://raw.githubusercontent.com/Pearljam66/Workout/main/screenshots/sessionhistory_light.png">
+  </div>
+</div>
+
 ## Requirements
 - macOS
 - Xcode 16.2
