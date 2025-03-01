@@ -23,7 +23,7 @@ class CalculatorViewModel: ObservableObject {
     init() {
 
 #if DEBUG
-            // Only needing for testing.
+            // Only needed for testing.
             // coreDataManager.deleteAllSessionsInCoreData()
 #endif
 
