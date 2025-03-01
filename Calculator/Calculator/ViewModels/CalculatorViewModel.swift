@@ -21,12 +21,13 @@ class CalculatorViewModel: ObservableObject {
     private let backendBaseURL = "http://localhost:3000"
 
     init() {
-            // Always create a new session ID on app launch per the project requirements.
 
 #if DEBUG
             // Only needing for testing.
             // coreDataManager.deleteAllSessionsInCoreData()
 #endif
+
+            // Always create a new session ID on app launch per the project requirements.
             sessionId = UUID().uuidString
             UserDefaults.standard.set(sessionId, forKey: "sessionId")
             currentSession = SessionData(
@@ -134,7 +135,6 @@ class CalculatorViewModel: ObservableObject {
         operation = ""
     }
 
-    // Save to Core Data only
     private func saveSessionDataToCoreData() {
         let operations = [
             "+": currentSession.addCount,
@@ -180,80 +180,6 @@ class CalculatorViewModel: ObservableObject {
         } catch {
             print("Error encoding session data: \(error)")
         }
-    }
-
-    func fetchAndSyncSessions(completion: @escaping ([SessionData]) -> Void) {
-        guard let url = URL(string: "\(backendBaseURL)/api/sessions") else {
-            completion([])
-            return
-        }
-        var request = URLRequest(url: url)
-        request.httpMethod = "GET"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        addBasicAuth(to: &request)
-
-        let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .iso8601
-
-        URLSession.shared.dataTask(with: request) { data, response, error in
-            if let error = error {
-                print("Error fetching sessions: \(error)")
-                completion([])
-                return
-            }
-
-            guard let data = data,
-                  let httpResponse = response as? HTTPURLResponse,
-                  httpResponse.statusCode == 200 else {
-                print("Invalid response from server")
-                completion([])
-                return
-            }
-
-            do {
-                // Temporarily decode into a struct with Date for backend compatibility
-                struct TempSessionData: Codable {
-                    let sessionId: String
-                    let addCount: Int
-                    let subtractCount: Int
-                    let multiplyCount: Int
-                    let divideCount: Int
-                    let lastUpdated: Date
-                }
-                let tempSessions = try decoder.decode([TempSessionData].self, from: data)
-                let sessions = tempSessions.map { temp in
-                    SessionData(
-                        sessionId: temp.sessionId,
-                        addCount: temp.addCount,
-                        subtractCount: temp.subtractCount,
-                        multiplyCount: temp.multiplyCount,
-                        divideCount: temp.divideCount,
-                        lastUpdated: temp.lastUpdated
-                    )
-                }
-                for session in sessions {
-                    let operations = [
-                        "+": session.addCount,
-                        "−": session.subtractCount,
-                        "×": session.multiplyCount,
-                        "÷": session.divideCount
-                    ]
-                    let dateFormatter = ISO8601DateFormatter()
-                    let lastUpdatedDate = dateFormatter.date(from: session.lastUpdated) ?? Date()
-                    self.coreDataManager.saveSession(
-                        sessionId: session.sessionId,
-                        operations: operations,
-                        lastUpdated: lastUpdatedDate
-                    )
-                }
-                DispatchQueue.main.async {
-                    completion(sessions)
-                }
-            } catch {
-                print("Error decoding sessions: \(error)")
-                completion([])
-            }
-        }.resume()
     }
 
     // In a dev or production environment, there would not be a hardcoded username and password.
