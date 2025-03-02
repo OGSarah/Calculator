@@ -7,6 +7,10 @@
 
 import SwiftUI
 
+struct ButtonConfig {
+    let title: String
+}
+
 struct CalculatorView: View {
     @StateObject private var viewModel = CalculatorViewModel()
     @State private var showingSessionSheet = false
