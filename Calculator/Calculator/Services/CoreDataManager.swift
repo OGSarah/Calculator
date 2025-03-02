@@ -7,7 +7,7 @@
 
 import CoreData
 
-class CoreDataManager {
+class CoreDataManager: SessionService {
     static let shared = CoreDataManager()
 
     lazy var persistentContainer: NSPersistentContainer = {
@@ -25,7 +25,6 @@ class CoreDataManager {
     }
 
     func fetchLastUpdated(for sessionId: String) -> Date? {
-        let context = persistentContainer.viewContext
         let fetchRequest: NSFetchRequest<SessionEntity> = SessionEntity.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "sessionId == %@", sessionId)
         fetchRequest.fetchLimit = 1
@@ -40,20 +39,7 @@ class CoreDataManager {
         return nil
     }
 
-    func saveContext() {
-        let context = persistentContainer.viewContext
-        if context.hasChanges {
-            do {
-                try context.save()
-            } catch {
-                let nserror = error as NSError
-                print("Error saving context: \(nserror), \(nserror.userInfo)")
-            }
-        }
-    }
-
-    func saveSession(sessionId: String, operations: [String: Int], lastUpdated: Date? = nil) -> SessionEntity {
-        let context = persistentContainer.viewContext
+    func saveSessionToCoreData(sessionId: String, operations: [String: Int], lastUpdated: Date?) -> SessionEntity {
         let fetchRequest: NSFetchRequest<SessionEntity> = SessionEntity.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "sessionId == %@", sessionId)
 
@@ -85,7 +71,6 @@ class CoreDataManager {
     }
 
     func loadOperations(for sessionId: String) -> [String: Int] {
-        let context = persistentContainer.viewContext
         let fetchRequest: NSFetchRequest<SessionEntity> = SessionEntity.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "sessionId == %@", sessionId)
 
@@ -104,7 +89,39 @@ class CoreDataManager {
         return ["+": 0, "−": 0, "×": 0, "÷": 0]
     }
 
-    func fetchAllSessions() -> [SessionEntity] {
+    func postSessionDataToBackend(session: SessionData, completion: @escaping (Result<Void, any Error>) -> Void) {
+        guard let url = URL(string: "http://localhost:3000/api/session") else {
+            print("Invalid URL")
+            completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])))
+            return
+        }
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        addBasicAuth(to: &request)
+
+        do {
+            let jsonData = try JSONEncoder().encode(session)
+            print("Sending session data: \(String(data: jsonData, encoding: .utf8) ?? "Unable to decode")")
+            URLSession.shared.uploadTask(with: request, from: jsonData) { data, response, error in
+                if let error = error {
+                    print("Network error: \(error.localizedDescription)")
+                    return
+                }
+                if let httpResponse = response as? HTTPURLResponse {
+                    print("Backend response status: \(httpResponse.statusCode)")
+                    if let responseData = data, let responseString = String(data: responseData, encoding: .utf8) {
+                        print("Backend response body: \(responseString)")
+                    }
+                }
+            }.resume()
+        } catch {
+            print("Error encoding session data: \(error)")
+            completion(.failure(error))
+        }
+    }
+
+    func fetchAllSessionsFromCoreData() -> [SessionEntity] {
         let context = persistentContainer.viewContext
         let fetchRequest: NSFetchRequest<SessionEntity> = SessionEntity.fetchRequest()
 
@@ -135,5 +152,26 @@ class CoreDataManager {
         }
     }
 #endif
+
+    // MARK: - Private Functions
+    private func addBasicAuth(to request: inout URLRequest) {
+        // In a dev or production environment, there would not be a hardcoded username and password.
+        let authString = "admin:calculator123"
+        if let authData = authString.data(using: .utf8) {
+            let base64Auth = authData.base64EncodedString()
+            request.setValue("Basic \(base64Auth)", forHTTPHeaderField: "Authorization")
+        }
+    }
+
+    private func saveContext() {
+        if context.hasChanges {
+            do {
+                try context.save()
+            } catch {
+                let nserror = error as NSError
+                print("Error saving context: \(nserror), \(nserror.userInfo)")
+            }
+        }
+    }
 
 }

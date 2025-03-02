@@ -31,7 +31,7 @@ struct CalculatorView: View {
         .padding(20)
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)) { _ in
             print("App is going to background - triggering sync")
-            viewModel.syncSessionDataToBackend()
+            viewModel.postSessionDataToBackend()
         }
     }
 

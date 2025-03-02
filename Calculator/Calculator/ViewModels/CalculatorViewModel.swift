@@ -17,16 +17,13 @@ class CalculatorViewModel: ObservableObject {
     private var previousNum: Int = 0
     private var operation: String = ""
     private var currentSession: SessionData
-    private let coreDataManager = CoreDataManager.shared
-    private let backendBaseURL = "http://localhost:3000"
+    private let sessionService: SessionService
 
-    init() {
-
+    init(sessionService: SessionService = CoreDataManager.shared) {
+        self.sessionService = sessionService
 #if DEBUG
-            // Only needed for testing.
-            // coreDataManager.deleteAllSessionsInCoreData()
+            // sessionService.deleteAllSessionsInCoreData() // Uncomment for testing
 #endif
-
             // Always create a new session ID on app launch per the project requirements.
             sessionId = UUID().uuidString
             UserDefaults.standard.set(sessionId, forKey: "sessionId")
@@ -57,6 +54,26 @@ class CalculatorViewModel: ObservableObject {
         }
     }
 
+    func getAllSessions() -> [SessionEntity] {
+        return sessionService.fetchAllSessionsFromCoreData()
+    }
+
+    func getCurrentSessionData() -> SessionData {
+        return currentSession
+    }
+
+    func postSessionDataToBackend() {
+        sessionService.postSessionDataToBackend(session: currentSession) { result in
+            switch result {
+            case .success:
+                print("Session data posted to backend successfully")
+            case .failure(let error):
+                print("Failed to post session data: \(error)")
+            }
+        }
+    }
+
+    // MARK: - Private Functions
     private func appendNumber(_ num: String) {
         display = (display == "0" ? "" : display) + num
         currentNum = Int(display) ?? 0
@@ -142,60 +159,13 @@ class CalculatorViewModel: ObservableObject {
             "×": currentSession.multiplyCount,
             "÷": currentSession.divideCount
         ]
-        // Parse lastUpdated back to Date for Core Data
         let dateFormatter = ISO8601DateFormatter()
         let lastUpdatedDate = dateFormatter.date(from: currentSession.lastUpdated) ?? Date()
-        coreDataManager.saveSession(
+        _ = sessionService.saveSessionToCoreData(
             sessionId: currentSession.sessionId,
             operations: operations,
             lastUpdated: lastUpdatedDate
         )
     }
 
-    func syncSessionDataToBackend() {
-        guard let url = URL(string: "\(backendBaseURL)/api/session") else {
-            print("Invalid URL: \(backendBaseURL)/api/session")
-            return
-        }
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        addBasicAuth(to: &request)
-
-        do {
-            let jsonData = try JSONEncoder().encode(currentSession)
-            print("Sending session data: \(String(data: jsonData, encoding: .utf8) ?? "Unable to decode")")
-            URLSession.shared.uploadTask(with: request, from: jsonData) { data, response, error in
-                if let error = error {
-                    print("Network error: \(error.localizedDescription)")
-                    return
-                }
-                if let httpResponse = response as? HTTPURLResponse {
-                    print("Backend response status: \(httpResponse.statusCode)")
-                    if let responseData = data, let responseString = String(data: responseData, encoding: .utf8) {
-                        print("Backend response body: \(responseString)")
-                    }
-                }
-            }.resume()
-        } catch {
-            print("Error encoding session data: \(error)")
-        }
-    }
-
-    // In a dev or production environment, there would not be a hardcoded username and password.
-    private func addBasicAuth(to request: inout URLRequest) {
-        let authString = "admin:calculator123"
-        if let authData = authString.data(using: .utf8) {
-            let base64Auth = authData.base64EncodedString()
-            request.setValue("Basic \(base64Auth)", forHTTPHeaderField: "Authorization")
-        }
-    }
-
-    func getAllSessions() -> [SessionEntity] {
-        return coreDataManager.fetchAllSessions()
-    }
-
-    func getCurrentSessionData() -> SessionData {
-        return currentSession
-    }
 }
