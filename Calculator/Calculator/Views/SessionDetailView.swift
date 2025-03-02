@@ -20,7 +20,11 @@ struct SessionDetailView: View {
                     .font(.headline)
                     .foregroundColor(isCurrent ? .purple.opacity(0.6) : .primary)
                 Spacer()
-                Text(dateFormatter.string(from: dateFormatter.date(from: session.lastUpdated) ?? Date()))
+                // Use postedToBackend for previous sessions, lastUpdated for current
+                let displayDate = isCurrent
+                ? (dateFormatter.date(from: session.lastUpdated) ?? Date())
+                : (session.postedToBackend.flatMap { dateFormatter.date(from: $0) } ?? dateFormatter.date(from: session.lastUpdated) ?? Date())
+                Text(dateFormatter.string(from: displayDate))
                     .font(.caption)
                     .foregroundColor(.secondary)
             }

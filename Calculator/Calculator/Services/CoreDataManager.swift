@@ -39,7 +39,7 @@ class CoreDataManager: SessionService {
         return nil
     }
 
-    func saveSessionToCoreData(sessionId: String, operations: [String: Int], lastUpdated: Date?) -> SessionEntity {
+    func saveSessionToCoreData(sessionId: String, operations: [String: Int], lastUpdated: Date?, postedToBackend: Date? = nil) -> SessionEntity {
         let fetchRequest: NSFetchRequest<SessionEntity> = SessionEntity.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "sessionId == %@", sessionId)
 
@@ -59,6 +59,7 @@ class CoreDataManager: SessionService {
             session.multiplyCount = Int32(operations["×", default: 0])
             session.divideCount = Int32(operations["÷", default: 0])
             session.lastUpdated = lastUpdated ?? Date()
+            session.postedToBackend = postedToBackend.map { ISO8601DateFormatter().string(from: $0) }
 
             saveContext()
             return session
@@ -108,7 +109,29 @@ class CoreDataManager: SessionService {
                     print("Network error: \(error.localizedDescription)")
                     return
                 }
-                if let httpResponse = response as? HTTPURLResponse {
+                if let httpResponse = response as? HTTPURLResponse, (200...299).contains(httpResponse.statusCode) {
+                    // On success, update Core Data with the posting time
+                    let postingTime = Date()
+                    let operations = [
+                        "+": session.addCount,
+                        "−": session.subtractCount,
+                        "×": session.multiplyCount,
+                        "÷": session.divideCount
+                    ]
+                    let formatter = ISO8601DateFormatter()
+                    let lastUpdatedDate = formatter.date(from: session.lastUpdated) ?? postingTime
+                    _ = self.saveSessionToCoreData(
+                        sessionId: session.sessionId,
+                        operations: operations,
+                        lastUpdated: lastUpdatedDate,
+                        postedToBackend: postingTime
+                    )
+                    print("Backend response status: \(httpResponse.statusCode)")
+                    if let responseData = data, let responseString = String(data: responseData, encoding: .utf8) {
+                        print("Backend response body: \(responseString)")
+                    }
+                    completion(.success(()))
+                } else if let httpResponse = response as? HTTPURLResponse {
                     print("Backend response status: \(httpResponse.statusCode)")
                     if let responseData = data, let responseString = String(data: responseData, encoding: .utf8) {
                         print("Backend response body: \(responseString)")

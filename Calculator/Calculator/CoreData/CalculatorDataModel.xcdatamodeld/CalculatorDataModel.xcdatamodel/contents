@@ -5,6 +5,7 @@
         <attribute name="divideCount" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="lastUpdated" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="multiplyCount" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="postedToBackend" optional="YES" attributeType="String"/>
         <attribute name="sessionId" optional="YES" attributeType="String"/>
         <attribute name="subtractCount" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
     </entity>
