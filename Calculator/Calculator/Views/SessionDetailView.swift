@@ -20,10 +20,17 @@ struct SessionDetailView: View {
                     .font(.headline)
                     .foregroundColor(isCurrent ? .purple.opacity(0.6) : .primary)
                 Spacer()
+
+                // TODO: Remove temporary debugging.
+                    .onAppear {
+                        printDates()
+                    }
+
                 // Use postedToBackend for previous sessions, lastUpdated for current
                 let displayDate = isCurrent
                 ? (dateFormatter.date(from: session.lastUpdated) ?? Date())
                 : (session.postedToBackend.flatMap { dateFormatter.date(from: $0) } ?? dateFormatter.date(from: session.lastUpdated) ?? Date())
+
                 Text(dateFormatter.string(from: displayDate))
                     .font(.caption)
                     .foregroundColor(.secondary)
@@ -55,6 +62,15 @@ struct SessionDetailView: View {
         .padding(.horizontal, 14)
     }
 
+    private func printDates() {
+        print("Last Updated: \(session.lastUpdated)")
+        if let postedDate = session.postedToBackend {
+         print("Posted to Backend: \(postedDate)")
+        } else {
+          print("Posted to Backend: nil")
+        }
+    }
+
     private func statView(label: String, value: Int, symbol: String) -> some View {
         HStack(spacing: 4) {
             Text(symbol)
@@ -67,6 +83,7 @@ struct SessionDetailView: View {
                 .foregroundColor(.secondary)
         }
     }
+
 }
 
 // MARK: - Previews
