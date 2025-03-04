@@ -112,7 +112,7 @@ Here are some screenshots showcasing the app's features:
   - POST /api/session: Saves session data to the database
   - GET /api/sessions: Retrieves all stored sessions (this was for my testing purposes)
 
-## If I had more time
+## If I had more time I would have:
 - Added unit tests and mocks for both the Swift frontend and Go backend.
 - Used Async/Await to handle concurrency.
 
