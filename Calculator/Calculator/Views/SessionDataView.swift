@@ -78,7 +78,6 @@ struct SessionDataView: View {
                     isLoading = true
                 }
                 let coreDataSessions = viewModel.getAllSessions()
-                let formatter = ISO8601DateFormatter()
                 let convertedSessions = coreDataSessions.map { entity in
                     SessionData(
                         sessionId: entity.sessionId ?? String(),
@@ -86,8 +85,7 @@ struct SessionDataView: View {
                         subtractCount: Int(entity.subtractCount),
                         multiplyCount: Int(entity.multiplyCount),
                         divideCount: Int(entity.divideCount),
-                        lastUpdated: entity.lastUpdated ?? Date(),
-                        postedToBackend: entity.postedToBackend.flatMap { formatter.date(from: $0) }
+                        lastUpdated: entity.lastUpdated ?? Date()
                     )
                 }
                 withAnimation(.easeInOut) {

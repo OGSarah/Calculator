@@ -59,7 +59,6 @@ class CoreDataManager: SessionService {
             session.multiplyCount = Int32(operations["×", default: 0])
             session.divideCount = Int32(operations["÷", default: 0])
             session.lastUpdated = lastUpdated ?? Date()
-            session.postedToBackend = postedToBackend.map { ISO8601DateFormatter().string(from: $0) }
 
             saveContext()
             return session

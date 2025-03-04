@@ -14,24 +14,22 @@ struct SessionData: Codable, Identifiable {
     let multiplyCount: Int
     let divideCount: Int
     let lastUpdated: String
-    let postedToBackend: String?
 
     var id: String {
         sessionId
     }
 
     enum CodingKeys: String, CodingKey {
-        case sessionId, addCount, subtractCount, multiplyCount, divideCount, lastUpdated, postedToBackend
+        case sessionId, addCount, subtractCount, multiplyCount, divideCount, lastUpdated
     }
 
-    init(sessionId: String, addCount: Int, subtractCount: Int, multiplyCount: Int, divideCount: Int, lastUpdated: Date, postedToBackend: Date? = nil) {
+    init(sessionId: String, addCount: Int, subtractCount: Int, multiplyCount: Int, divideCount: Int, lastUpdated: Date) {
         self.sessionId = sessionId
         self.addCount = addCount
         self.subtractCount = subtractCount
         self.multiplyCount = multiplyCount
         self.divideCount = divideCount
         self.lastUpdated = ISO8601DateFormatter().string(from: lastUpdated)
-        self.postedToBackend = postedToBackend.map { ISO8601DateFormatter().string(from: $0) }
     }
 
 }

@@ -76,9 +76,7 @@ class CalculatorViewModel: ObservableObject {
                     subtractCount: self.currentSession.subtractCount,
                     multiplyCount: self.currentSession.multiplyCount,
                     divideCount: self.currentSession.divideCount,
-                    lastUpdated: formatter.date(from: self.currentSession.lastUpdated) ?? Date(),
-                    postedToBackend: Date()
-                )
+                    lastUpdated: formatter.date(from: self.currentSession.lastUpdated) ?? Date())
             case .failure(let error):
                 print("Failed to post session data: \(error)")
             }
