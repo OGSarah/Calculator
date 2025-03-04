@@ -1,5 +1,5 @@
 //
-//  SessionDataView.swift
+//  SessionHistoryView.swift
 //  Calculator
 //
 //  Created by Sarah Clark on 2/26/25.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct SessionDataView: View {
+struct SessionHistorySheetView: View {
     @ObservedObject var viewModel: CalculatorViewModel
     @Environment(\.dismiss) var dismiss
     @State private var sessions: [SessionData] = []
@@ -99,11 +99,11 @@ struct SessionDataView: View {
 }
 
 #Preview("Light Mode") {
-    SessionDataView(viewModel: CalculatorViewModel())
+    SessionHistorySheetView(viewModel: CalculatorViewModel())
         .preferredColorScheme(.light)
 }
 
 #Preview("Dark Mode") {
-    SessionDataView(viewModel: CalculatorViewModel())
+    SessionHistorySheetView(viewModel: CalculatorViewModel())
         .preferredColorScheme(.dark)
 }

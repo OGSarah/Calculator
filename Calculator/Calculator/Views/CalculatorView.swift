@@ -29,7 +29,7 @@ struct CalculatorView: View {
             calculatorDisplay
         }
         .sheet(isPresented: $showingSessionSheet) {
-            SessionDataView(viewModel: viewModel)
+            SessionHistorySheetView(viewModel: viewModel)
                 .presentationDetents([.large])
         }
         .padding(20)
