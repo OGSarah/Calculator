@@ -174,8 +174,7 @@ class CalculatorViewModel: ObservableObject {
         _ = sessionService.saveSessionToCoreData(
             sessionId: currentSession.sessionId,
             operations: operations,
-            lastUpdated: lastUpdatedDate,
-            postedToBackend: nil
+            lastUpdated: lastUpdatedDate
         )
     }
 

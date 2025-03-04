@@ -39,7 +39,7 @@ class CoreDataManager: SessionService {
         return nil
     }
 
-    func saveSessionToCoreData(sessionId: String, operations: [String: Int], lastUpdated: Date?, postedToBackend: Date? = nil) -> SessionEntity {
+    func saveSessionToCoreData(sessionId: String, operations: [String: Int], lastUpdated: Date?) -> SessionEntity {
         let fetchRequest: NSFetchRequest<SessionEntity> = SessionEntity.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "sessionId == %@", sessionId)
 
@@ -58,7 +58,7 @@ class CoreDataManager: SessionService {
             session.subtractCount = Int32(operations["−", default: 0])
             session.multiplyCount = Int32(operations["×", default: 0])
             session.divideCount = Int32(operations["÷", default: 0])
-            session.lastUpdated = lastUpdated ?? Date()
+            session.lastUpdated = lastUpdated
 
             saveContext()
             return session
@@ -122,8 +122,7 @@ class CoreDataManager: SessionService {
                     _ = self.saveSessionToCoreData(
                         sessionId: session.sessionId,
                         operations: operations,
-                        lastUpdated: lastUpdatedDate,
-                        postedToBackend: postingTime
+                        lastUpdated: lastUpdatedDate
                     )
                     print("Backend response status: \(httpResponse.statusCode)")
                     if let responseData = data, let responseString = String(data: responseData, encoding: .utf8) {
