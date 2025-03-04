@@ -69,14 +69,14 @@ class CalculatorViewModel: ObservableObject {
                 print("Session data posted to backend successfully")
 
                 // Update currentSession with the posted time
-                let formatter = ISO8601DateFormatter()
                 self.currentSession = SessionData(
                     sessionId: self.currentSession.sessionId,
                     addCount: self.currentSession.addCount,
                     subtractCount: self.currentSession.subtractCount,
                     multiplyCount: self.currentSession.multiplyCount,
                     divideCount: self.currentSession.divideCount,
-                    lastUpdated: formatter.date(from: self.currentSession.lastUpdated) ?? Date())
+                    lastUpdated: self.currentSession.lastUpdated
+                )
             case .failure(let error):
                 print("Failed to post session data: \(error)")
             }
@@ -169,12 +169,10 @@ class CalculatorViewModel: ObservableObject {
             "×": currentSession.multiplyCount,
             "÷": currentSession.divideCount
         ]
-        let dateFormatter = ISO8601DateFormatter()
-        let lastUpdatedDate = dateFormatter.date(from: currentSession.lastUpdated) ?? Date()
         _ = sessionService.saveSessionToCoreData(
             sessionId: currentSession.sessionId,
             operations: operations,
-            lastUpdated: lastUpdatedDate
+            lastUpdated: currentSession.lastUpdated
         )
     }
 

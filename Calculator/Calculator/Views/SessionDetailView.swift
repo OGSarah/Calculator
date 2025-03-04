@@ -21,9 +21,7 @@ struct SessionDetailView: View {
                     .foregroundColor(isCurrent ? .purple.opacity(0.6) : .primary)
                 Spacer()
 
-                let displayDate = (dateFormatter.date(from: session.lastUpdated) ?? Date())
-
-                Text(dateFormatter.string(from: displayDate))
+                Text(dateFormatter.string(from: session.lastUpdated))
                     .font(.caption)
                     .foregroundColor(.secondary)
             }

@@ -17,6 +17,7 @@ struct SessionHistorySheetView: View {
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
         formatter.timeStyle = .short
+        formatter.timeZone = TimeZone.current
         return formatter
     }()
 

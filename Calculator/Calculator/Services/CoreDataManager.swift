@@ -117,12 +117,11 @@ class CoreDataManager: SessionService {
                         "×": session.multiplyCount,
                         "÷": session.divideCount
                     ]
-                    let formatter = ISO8601DateFormatter()
-                    let lastUpdatedDate = formatter.date(from: session.lastUpdated) ?? postingTime
+
                     _ = self.saveSessionToCoreData(
                         sessionId: session.sessionId,
                         operations: operations,
-                        lastUpdated: lastUpdatedDate
+                        lastUpdated: session.lastUpdated
                     )
                     print("Backend response status: \(httpResponse.statusCode)")
                     if let responseData = data, let responseString = String(data: responseData, encoding: .utf8) {

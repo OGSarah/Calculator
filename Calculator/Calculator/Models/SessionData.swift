@@ -13,7 +13,7 @@ struct SessionData: Codable, Identifiable {
     let subtractCount: Int
     let multiplyCount: Int
     let divideCount: Int
-    let lastUpdated: String
+    let lastUpdated: Date
 
     var id: String {
         sessionId
@@ -29,7 +29,33 @@ struct SessionData: Codable, Identifiable {
         self.subtractCount = subtractCount
         self.multiplyCount = multiplyCount
         self.divideCount = divideCount
-        self.lastUpdated = ISO8601DateFormatter().string(from: lastUpdated)
+        self.lastUpdated = lastUpdated
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        sessionId = try container.decode(String.self, forKey: .sessionId)
+        addCount = try container.decode(Int.self, forKey: .addCount)
+        subtractCount = try container.decode(Int.self, forKey: .subtractCount)
+        multiplyCount = try container.decode(Int.self, forKey: .multiplyCount)
+        divideCount = try container.decode(Int.self, forKey: .divideCount)
+
+        let dateString = try container.decode(String.self, forKey: .lastUpdated)
+        if let date = ISO8601DateFormatter().date(from: dateString) {
+            lastUpdated = date
+        } else {
+            lastUpdated = Date()
+        }
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(sessionId, forKey: .sessionId)
+        try container.encode(addCount, forKey: .addCount)
+        try container.encode(subtractCount, forKey: .subtractCount)
+        try container.encode(multiplyCount, forKey: .multiplyCount)
+        try container.encode(divideCount, forKey: .divideCount)
+        try container.encode(ISO8601DateFormatter().string(from: lastUpdated), forKey: .lastUpdated)
     }
 
 }
