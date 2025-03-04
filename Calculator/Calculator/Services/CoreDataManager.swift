@@ -109,8 +109,7 @@ class CoreDataManager: SessionService {
                     return
                 }
                 if let httpResponse = response as? HTTPURLResponse, (200...299).contains(httpResponse.statusCode) {
-                    // On success, update Core Data with the posting time
-                    let postingTime = Date()
+
                     let operations = [
                         "+": session.addCount,
                         "−": session.subtractCount,
