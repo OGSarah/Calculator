@@ -110,7 +110,9 @@ Here are some screenshots showcasing the app's features:
 - Implements basic authentication with hardcoded credentials (only done for this sample project, not something that would be done in development or production environments), though not currently applied to routes.
 - Provides two endpoints:
   - POST /api/session: Saves session data to the database
-  - GET /api/sessions: Retrieves all stored sessions
+  - GET /api/sessions: Retrieves all stored sessions (this was for my testing purposes)
 
-
+## If I had more time
+- Added unit tests and mocks for both the Swift frontend and Go backend.
+- Used Async/Await to handle concurrency.
 
