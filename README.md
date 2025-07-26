@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/Pearljam66/Calculator/31bc2d31db020d9ab031a3e43799d7beb084db0c/Calculator/Calculator/Assets.xcassets/AppIcon.appiconset/calculator_any.png" width="150" style="border: 3px solid white; border-radius: 15px; vertical-align: middle; margin-right: 20px;">
+  <img src="https://github.com/OGSarah/Calculator/blob/cd6e6851bf1cfef4d4352b14d50c7c067b32c476/Calculator/Calculator/Assets.xcassets/AppIcon.appiconset/calculator_any.png" width="150" style="border: 3px solid white; border-radius: 15px; vertical-align: middle; margin-right: 20px;">
   <h1 style="display: inline-block; vertical-align: middle;">Calculator</h1>
 </div>
 
@@ -11,10 +11,10 @@ Here are some screenshots showcasing the app's features:
 
 <div align="center">
   <div style="border: 2px solid white; border-radius: 10px;">
-    <img width="20%" src="https://raw.githubusercontent.com/Pearljam66/Calculator/main/Screenshots/calculatorscreen_dark.png">
-    <img width="20%" src="https://raw.githubusercontent.com/Pearljam66/Calculator/main/Screenshots/calculatorscreen_light.png">
-    <img width="20%" src="https://raw.githubusercontent.com/Pearljam66/Calculator/main/Screenshots/nosessionhistory_dark.png">
-    <img width="20%" src="https://raw.githubusercontent.com/Pearljam66/Calculator/main/Screenshots/nosessionhistory_light.png">
+    <img width="20%" src="https://github.com/OGSarah/Calculator/blob/cd6e6851bf1cfef4d4352b14d50c7c067b32c476/Screenshots/calculatorscreen_dark.png">
+    <img width="20%" src="https://github.com/OGSarah/Calculator/blob/cd6e6851bf1cfef4d4352b14d50c7c067b32c476/Screenshots/calculatorscreen_light.png">
+    <img width="20%" src="https://github.com/OGSarah/Calculator/blob/cd6e6851bf1cfef4d4352b14d50c7c067b32c476/Screenshots/nosessionhistory_dark.png">
+    <img width="20%" src="https://github.com/OGSarah/Calculator/blob/cd6e6851bf1cfef4d4352b14d50c7c067b32c476/Screenshots/nosessionhistory_light.png">
   </div>
 </div>
 
@@ -22,8 +22,8 @@ Here are some screenshots showcasing the app's features:
 
 <div align="center">
   <div style="border: 2px solid white; border-radius: 10px;">
-    <img width="20%" src="https://raw.githubusercontent.com/Pearljam66/Calculator/main/Screenshots/sessionhistory_dark.png">
-    <img width="20%" src="https://raw.githubusercontent.com/Pearljam66/Calculator/main/Screenshots/sessionhistory_light.png">
+    <img width="20%" src="https://github.com/OGSarah/Calculator/blob/cd6e6851bf1cfef4d4352b14d50c7c067b32c476/Screenshots/sessionhistory_dark.png">
+    <img width="20%" src="https://github.com/OGSarah/Calculator/blob/cd6e6851bf1cfef4d4352b14d50c7c067b32c476/Screenshots/sessionhistory_light.png">
   </div>
 </div>
 
