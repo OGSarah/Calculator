@@ -116,3 +116,10 @@ Here are some screenshots showcasing the app's features:
 - Added unit tests and mocks for both the Swift frontend and Go backend.
 - Used Async/Await to handle concurrency.
 
+## License
+Proprietary Software
+
+© 2025 SarahUniverse
+
+This software and its source code are the exclusive property of SarahUniverse.
+No part of this software may be reproduced, distributed, or transmitted in any form or by any means without prior written permission.
