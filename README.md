@@ -28,9 +28,9 @@ Here are some screenshots showcasing the app's features:
 </div>
 
 ## Requirements
-- macOS
-- Xcode 16.2
-- iOS 17.0+
+- macOS 26
+- Xcode 26
+- iOS 26
 - Go 1.21+
 
 ## Setup
