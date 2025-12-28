@@ -1,0 +1,40 @@
+{
+  "fill" : {
+    "solid" : "srgb:0.26052,0.26052,0.26052,1.00000"
+  },
+  "groups" : [
+    {
+      "blend-mode" : "screen",
+      "layers" : [
+        {
+          "blend-mode" : "lighten",
+          "image-name" : "calculator.png",
+          "name" : "calculator",
+          "position" : {
+            "scale" : 2,
+            "translation-in-points" : [
+              2.25,
+              0
+            ]
+          }
+        }
+      ],
+      "lighting" : "individual",
+      "shadow" : {
+        "kind" : "layer-color",
+        "opacity" : 0.5
+      },
+      "specular" : true,
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.5
+      }
+    }
+  ],
+  "supported-platforms" : {
+    "circles" : [
+      "watchOS"
+    ],
+    "squares" : "shared"
+  }
+}
