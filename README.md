@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://github.com/OGSarah/Calculator/blob/8f7973bb4de3024c8c275a70b836d69a34471885/Screenshots/AppIcon.png" width="150" style="border: 3px solid white; border-radius: 15px; vertical-align: middle; margin-right: 20px;">
+  <img src="https://github.com/OGSarah/Calculator/blob/8f7973bb4de3024c8c275a70b836d69a34471885/Screenshots/AppIcon.png" width="300" style="border: 3px solid white; border-radius: 15px; vertical-align: middle; margin-right: 20px;">
   <h1 style="display: inline-block; vertical-align: middle;">Calculator</h1>
 </div>
 
