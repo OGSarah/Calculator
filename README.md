@@ -11,10 +11,10 @@ Here are some screenshots showcasing the app's features:
 
 <div align="center">
   <div style="border: 2px solid white; border-radius: 10px;">
-    <img width="20%" src="https://github.com/OGSarah/Calculator/blob/cd6e6851bf1cfef4d4352b14d50c7c067b32c476/Screenshots/calculatorscreen_dark.png">
-    <img width="20%" src="https://github.com/OGSarah/Calculator/blob/cd6e6851bf1cfef4d4352b14d50c7c067b32c476/Screenshots/calculatorscreen_light.png">
-    <img width="20%" src="https://github.com/OGSarah/Calculator/blob/cd6e6851bf1cfef4d4352b14d50c7c067b32c476/Screenshots/nosessionhistory_dark.png">
-    <img width="20%" src="https://github.com/OGSarah/Calculator/blob/cd6e6851bf1cfef4d4352b14d50c7c067b32c476/Screenshots/nosessionhistory_light.png">
+    <img width="20%" src="https://github.com/OGSarah/Calculator/blob/6dac41a4bad70e4db09a69d2934354fb1d012871/Screenshots/calculatorscreen_dark.png">
+    <img width="20%" src="https://github.com/OGSarah/Calculator/blob/6dac41a4bad70e4db09a69d2934354fb1d012871/Screenshots/calculatorscreen_light.png">
+    <img width="20%" src="https://github.com/OGSarah/Calculator/blob/6dac41a4bad70e4db09a69d2934354fb1d012871/Screenshots/nosessionhistory_dark.png">
+    <img width="20%" src="https://github.com/OGSarah/Calculator/blob/6dac41a4bad70e4db09a69d2934354fb1d012871/Screenshots/nosessionhistory_light.png">
   </div>
 </div>
 
@@ -22,8 +22,8 @@ Here are some screenshots showcasing the app's features:
 
 <div align="center">
   <div style="border: 2px solid white; border-radius: 10px;">
-    <img width="20%" src="https://github.com/OGSarah/Calculator/blob/cd6e6851bf1cfef4d4352b14d50c7c067b32c476/Screenshots/sessionhistory_dark.png">
-    <img width="20%" src="https://github.com/OGSarah/Calculator/blob/cd6e6851bf1cfef4d4352b14d50c7c067b32c476/Screenshots/sessionhistory_light.png">
+    <img width="20%" src="https://github.com/OGSarah/Calculator/blob/6dac41a4bad70e4db09a69d2934354fb1d012871/Screenshots/sessionhistory_dark.png">
+    <img width="20%" src="https://github.com/OGSarah/Calculator/blob/6dac41a4bad70e4db09a69d2934354fb1d012871/Screenshots/sessionhistory_light.png">
   </div>
 </div>
 
