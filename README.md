@@ -3,7 +3,7 @@
   <h1 style="display: inline-block; vertical-align: middle;">Calculator</h1>
 </div>
 
-A simple SwiftUI calculator app that performs basic arithmetic operations, logs session data to a Go server and SQLite database, and stores sessions locally on the iOS device using Core Data.
+A SwiftUI calculator app that performs basic arithmetic operations, logs session data to a Go server and SQLite database, and stores sessions locally on the iOS device using Core Data.
 
 ## Screenshots:
 
