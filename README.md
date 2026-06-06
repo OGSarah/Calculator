@@ -115,3 +115,7 @@ Here are some screenshots showcasing the app's features:
 ## If I had more time I would have:
 - Added unit tests and mocks for both the Swift frontend and Go backend.
 - Used Async/Await to handle concurrency.
+
+## License
+
+Released under the [MIT License](LICENSE). © 2026 SarahUniverse
