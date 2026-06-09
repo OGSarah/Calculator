@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		26D174652FD8A6850027F966 /* Calculator.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 26D174642FD8A6850027F966 /* Calculator.xctestplan */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		26F2335E2D6FCD6B00A57E7D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -24,6 +28,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		26D174642FD8A6850027F966 /* Calculator.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = Calculator.xctestplan; sourceTree = "<group>"; };
 		26F2334D2D6FCD6A00A57E7D /* Calculator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Calculator.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		26F2335D2D6FCD6B00A57E7D /* CalculatorTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CalculatorTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		26F233672D6FCD6B00A57E7D /* CalculatorUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CalculatorUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -88,6 +93,7 @@
 		26F233442D6FCD6A00A57E7D = {
 			isa = PBXGroup;
 			children = (
+				26D174642FD8A6850027F966 /* Calculator.xctestplan */,
 				26F2334F2D6FCD6A00A57E7D /* Calculator */,
 				26F233602D6FCD6B00A57E7D /* CalculatorTests */,
 				26F2336A2D6FCD6B00A57E7D /* CalculatorUITests */,
@@ -226,6 +232,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				26D174652FD8A6850027F966 /* Calculator.xctestplan in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

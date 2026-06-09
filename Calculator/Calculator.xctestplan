@@ -1,0 +1,32 @@
+{
+  "configurations" : [
+    {
+      "id" : "98ADE55B-4A66-44D5-B2BE-DEACC1170093",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "testTimeoutsEnabled" : true,
+    "testInteropMode": "complete"
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:Calculator.xcodeproj",
+        "identifier" : "26F2335C2D6FCD6B00A57E7D",
+        "name" : "CalculatorTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:Calculator.xcodeproj",
+        "identifier" : "26F233662D6FCD6B00A57E7D",
+        "name" : "CalculatorUITests"
+      }
+    }
+  ],
+  "version" : 1
+}
