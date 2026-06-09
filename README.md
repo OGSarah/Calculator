@@ -3,7 +3,7 @@
   <h1 style="display: inline-block; vertical-align: middle;">Calculator</h1>
 </div>
 
-A SwiftUI calculator built to demonstrate a clean, testable iOS architecture end to end: an MVVM front end backed by SwiftData for local persistence, with each session synced to a Go + SQLite backend when the app moves to the background. The arithmetic is deliberately simple — the interesting work is in the separation of concerns, the protocol-driven service layer, and the accessibility and test coverage around it.
+A SwiftUI calculator built to demonstrate a clean, testable iOS architecture end to end: an MVVM front end backed by SwiftData for local persistence, with each session synced to a Go + SQLite backend when the app moves to the background. The arithmetic is deliberately simple. The interesting work is in the separation of concerns, the protocol-driven service layer, and the accessibility and test coverage around it.
 
 [![Unit Tests](https://github.com/OGSarah/Calculator/actions/workflows/tests.yml/badge.svg)](https://github.com/OGSarah/Calculator/actions/workflows/tests.yml)
 
