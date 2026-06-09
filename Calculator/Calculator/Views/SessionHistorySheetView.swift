@@ -78,15 +78,15 @@ struct SessionHistorySheetView: View {
                 withAnimation {
                     isLoading = true
                 }
-                let coreDataSessions = viewModel.getAllSessions()
-                let convertedSessions = coreDataSessions.map { entity in
+                let storedSessions = viewModel.getAllSessions()
+                let convertedSessions = storedSessions.map { entity in
                     SessionData(
-                        sessionId: entity.sessionId ?? String(),
-                        addCount: Int(entity.addCount),
-                        subtractCount: Int(entity.subtractCount),
-                        multiplyCount: Int(entity.multiplyCount),
-                        divideCount: Int(entity.divideCount),
-                        lastUpdated: entity.lastUpdated ?? Date()
+                        sessionId: entity.sessionId,
+                        addCount: entity.addCount,
+                        subtractCount: entity.subtractCount,
+                        multiplyCount: entity.multiplyCount,
+                        divideCount: entity.divideCount,
+                        lastUpdated: entity.lastUpdated
                     )
                 }
                 withAnimation(.easeInOut) {

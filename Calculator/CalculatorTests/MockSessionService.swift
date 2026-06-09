@@ -3,12 +3,12 @@
 //  CalculatorTests
 //
 //  A test double for SessionService that records interactions and avoids
-//  touching the real Core Data store or the network. It uses a lightweight
-//  in-memory Core Data stack so it can vend real SessionEntity instances
-//  where the protocol requires them.
+//  touching the real SwiftData store or the network. SwiftData @Model
+//  instances can be created directly, so it vends real SessionEntity
+//  objects without needing a ModelContext.
 //
 
-import CoreData
+import Foundation
 @testable import Calculator
 
 final class MockSessionService: SessionService {
@@ -29,28 +29,12 @@ final class MockSessionService: SessionService {
     private var storedOperations: [String: [String: Int]] = [:]
     private var storedDates: [String: Date] = [:]
 
-    // In-memory Core Data context used only to create SessionEntity objects.
-    private lazy var context: NSManagedObjectContext = {
-        let bundle = Bundle(for: CoreDataManager.self)
-        guard let model = NSManagedObjectModel.mergedModel(from: [bundle]) else {
-            fatalError("Unable to load the CalculatorDataModel managed object model for testing.")
-        }
-        let container = NSPersistentContainer(name: "CalculatorDataModel", managedObjectModel: model)
-        let description = NSPersistentStoreDescription()
-        description.type = NSInMemoryStoreType
-        container.persistentStoreDescriptions = [description]
-        container.loadPersistentStores { _, error in
-            precondition(error == nil, "Failed to load in-memory store: \(String(describing: error))")
-        }
-        return container.viewContext
-    }()
-
     // MARK: - SessionService
     func fetchLastUpdated(for sessionId: String) -> Date? {
         storedDates[sessionId]
     }
 
-    func saveSessionToCoreData(sessionId: String, operations: [String: Int], lastUpdated: Date?) -> SessionEntity {
+    func saveSession(sessionId: String, operations: [String: Int], lastUpdated: Date?) -> SessionEntity {
         saveCallCount += 1
         lastSavedSessionId = sessionId
         lastSavedOperations = operations
@@ -74,7 +58,7 @@ final class MockSessionService: SessionService {
         storedOperations[sessionId] ?? ["+": 0, "−": 0, "×": 0, "÷": 0]
     }
 
-    func fetchAllSessionsFromCoreData() -> [SessionEntity] {
+    func fetchAllSessions() -> [SessionEntity] {
         sessionsToReturn
     }
 
@@ -85,7 +69,7 @@ final class MockSessionService: SessionService {
     }
 
 #if DEBUG
-    func deleteAllSessionsInCoreData() {
+    func deleteAllSessions() {
         deleteCallCount += 1
     }
 #endif
@@ -99,13 +83,13 @@ final class MockSessionService: SessionService {
         divide: Int = 0,
         lastUpdated: Date = Date()
     ) -> SessionEntity {
-        let entity = SessionEntity(context: context)
-        entity.sessionId = sessionId
-        entity.addCount = Int32(add)
-        entity.subtractCount = Int32(subtract)
-        entity.multiplyCount = Int32(multiply)
-        entity.divideCount = Int32(divide)
-        entity.lastUpdated = lastUpdated
-        return entity
+        SessionEntity(
+            sessionId: sessionId,
+            addCount: add,
+            subtractCount: subtract,
+            multiplyCount: multiply,
+            divideCount: divide,
+            lastUpdated: lastUpdated
+        )
     }
 }

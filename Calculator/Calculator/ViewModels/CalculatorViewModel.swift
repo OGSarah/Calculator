@@ -5,7 +5,6 @@
 //  Created by Sarah Clark on 2/26/25.
 //
 
-import CoreData
 import Foundation
 import SwiftUI
 
@@ -19,10 +18,10 @@ import SwiftUI
     private var currentSession: SessionData
     private let sessionService: SessionService
 
-    init(sessionService: SessionService = CoreDataManager.shared) {
+    init(sessionService: SessionService = SwiftDataManager.shared) {
         self.sessionService = sessionService
 #if DEBUG
-            // sessionService.deleteAllSessionsInCoreData() // Uncomment for testing
+            // sessionService.deleteAllSessions() // Uncomment for testing
 #endif
             // Always create a new session ID on app launch per the project requirements.
             sessionId = UUID().uuidString
@@ -55,7 +54,7 @@ import SwiftUI
     }
 
     func getAllSessions() -> [SessionEntity] {
-        return sessionService.fetchAllSessionsFromCoreData()
+        return sessionService.fetchAllSessions()
     }
 
     func getCurrentSessionData() -> SessionData {
@@ -169,7 +168,7 @@ import SwiftUI
             "×": currentSession.multiplyCount,
             "÷": currentSession.divideCount
         ]
-        _ = sessionService.saveSessionToCoreData(
+        _ = sessionService.saveSession(
             sessionId: currentSession.sessionId,
             operations: operations,
             lastUpdated: currentSession.lastUpdated
