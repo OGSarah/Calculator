@@ -3,12 +3,11 @@
   <h1 style="display: inline-block; vertical-align: middle;">Calculator</h1>
 </div>
 
-A SwiftUI calculator app that performs basic arithmetic operations, logs session data to a Go server and SQLite database, and stores sessions locally on the iOS device using SwiftData.
+A SwiftUI calculator built to demonstrate a clean, testable iOS architecture end to end: an MVVM front end backed by SwiftData for local persistence, with each session synced to a Go + SQLite backend when the app moves to the background. The arithmetic is deliberately simple — the interesting work is in the separation of concerns, the protocol-driven service layer, and the accessibility and test coverage around it.
 
 [![Unit Tests](https://github.com/OGSarah/Calculator/actions/workflows/tests.yml/badge.svg)](https://github.com/OGSarah/Calculator/actions/workflows/tests.yml)
 
-**NOTE:**
-Tests will fail on Github until they add Xcode 27 with iOS 27 support. They pass locally with the latest Xcode 27 beta. Since I'm not shipping this app, I will leave the project as is until Git
+> **CI note:** The suite is green locally on the Xcode 27 / iOS 27 beta toolchain. The GitHub Actions runners don't yet ship that toolchain, so the badge will stay red until they do. This is a portfolio project rather than a shipping app, so I'm leaving CI as-is rather than pinning to an older SDK.
 
 ## Screenshots:
 
@@ -33,25 +32,55 @@ Here are some screenshots showcasing the app's features:
 </div>
 
 ## Key Features:
+- Basic arithmetic (add, subtract, multiply, divide) with a running history line above the result.
+- Per-session usage tracking — every operation increments a counter on the active session.
+- Local persistence via SwiftData, so session history survives relaunches.
+- Background sync: session data is POSTed to the Go backend the moment the app resigns active.
+- Session history sheet listing the current and prior sessions, sorted by most recently updated.
+- Full Dark Mode support and a Liquid Glass material treatment on the display and controls.
+- Accessibility built in: VoiceOver labels/values/traits and Dynamic Type via `@ScaledMetric`.
 
 ## Technologies:
 - Swift 6
 - SwiftUI
+- SwiftData (local persistence)
 - Swift Testing framework (unit tests)
 - XCTest + XCUIAutomation (UI tests)
-- SwiftData
+- Go + Gin + SQLite (backend)
 
 ### Focus Areas:
+- A protocol-driven service layer so the view model never talks to a concrete store.
+- Testability — dependencies are injected, not reached for, so the unit tests run against a mock.
+- Accessibility as a first-class concern rather than an afterthought.
+- A clear network/persistence boundary, with the backend sync isolated to a single service method.
 
 ## Data Source:
+Session state lives in two places. The source of truth on-device is a SwiftData `SessionEntity` store, keyed by a unique `sessionId` generated per launch. When the app backgrounds, the current session is serialized and sent to the Go backend, which persists it to a SQLite database (`Backend/calculator.db`). The two stores are kept in sync but the app remains fully functional offline — the backend is a sink, not a dependency.
 
 ## Architecture & Design Patterns:
+The app follows MVVM with a protocol-backed service layer.
+
+- **View** (`CalculatorView`, `SessionHistorySheetView`) — pure SwiftUI, no business logic. State is held in an `@Observable` view model.
+- **ViewModel** (`CalculatorViewModel`) — owns display state and calculation logic, and translates user input into session mutations. It depends on a `SessionService` protocol, defaulting to `SwiftDataManager.shared` but accepting any conforming type via its initializer.
+- **Service** (`SessionService` protocol → `SwiftDataManager`) — the only layer that knows about SwiftData or the network. Swapping the implementation (e.g. for tests) is a one-line change.
+- **Model** (`SessionEntity`, `SessionData`) — a SwiftData `@Model` for persistence and a `Codable` value type for the wire format, kept separate so the API contract and the storage schema can evolve independently.
+
+This is what makes the view model trivial to test in isolation — `MockSessionService` stands in for the real store with no SwiftData or networking involved.
 
 ### Testing
+- **Unit tests** (Swift Testing) cover the view model's calculation and session-tracking logic against `MockSessionService`, plus the `SessionData` encoding contract.
+- **UI tests** (XCUIAutomation) drive the calculator through real input sequences and assert on the display, using accessibility identifiers as the contract between view and test.
+- **Accessibility tests** verify VoiceOver labels/traits and that the UI holds up under Dynamic Type.
 
 ### Continuous Integration
+GitHub Actions runs the unit test suite on every push (`.github/workflows/tests.yml`). See the CI note at the top of this README for why the badge currently reflects the runner toolchain rather than the code.
 
 ### Trade-offs and Decisions:
+- **Integer-only arithmetic.** The math is intentionally minimal — division truncates and there's no floating point. The focus of this project is architecture and data flow, not building a full scientific calculator.
+- **New session per launch.** Per the project brief, a fresh `sessionId` is minted on each launch rather than resuming the last one. This keeps the usage-tracking semantics simple and unambiguous.
+- **Backend is fire-and-forget on background.** Sync happens on `willResignActive` rather than after every keystroke, trading real-time accuracy for far less network chatter and battery cost.
+- **`localhost` backend.** The app points at `http://localhost:3000`, so it runs on the Simulator only. In a real deployment this would be an injected, environment-specific base URL behind real auth.
+- **Completion handlers over async/await in the service.** The networking still uses `URLSession` completion handlers; migrating this layer to async/await is the most worthwhile next refactor (see below).
 
 ## Requirements
 - macOS 27
@@ -138,9 +167,11 @@ Here are some screenshots showcasing the app's features:
   - POST /api/session: Saves session data to the database
   - GET /api/sessions: Retrieves all stored sessions (this was for my testing purposes)
 
-## If I had more time I would have:
-- Added unit tests and mocks for both the Swift frontend and Go backend.
-- Used Async/Await to handle concurrency.
+## Next steps / what I'd do with more time:
+- Migrate the `SessionService` networking from `URLSession` completion handlers to async/await and make `postSessionDataToBackend` an `async throws` call.
+- Add a retry/queue for failed background syncs so data isn't lost when the backend is unreachable.
+- Add test coverage on the Go backend (handler and persistence tests).
+- Drive the backend base URL and credentials from configuration rather than hardcoding them.
 
 ## License
 
