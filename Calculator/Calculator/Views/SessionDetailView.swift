@@ -64,7 +64,6 @@ struct SessionDetailView: View {
                 .foregroundColor(.secondary)
         }
     }
-
 }
 
 // MARK: - Previews

@@ -12,7 +12,7 @@ struct ButtonConfig {
 }
 
 struct CalculatorView: View {
-    @StateObject private var viewModel = CalculatorViewModel()
+    @State private var viewModel = CalculatorViewModel()
     @State private var showingSessionSheet = false
 
     private let buttonLayout: [[ButtonConfig?]] = [
@@ -112,7 +112,6 @@ struct CalculatorView: View {
             }
         }
     }
-
 }
 
 // MARK: - Previews

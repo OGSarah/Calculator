@@ -57,5 +57,4 @@ struct SessionData: Codable, Identifiable {
         try container.encode(divideCount, forKey: .divideCount)
         try container.encode(ISO8601DateFormatter().string(from: lastUpdated), forKey: .lastUpdated)
     }
-
 }

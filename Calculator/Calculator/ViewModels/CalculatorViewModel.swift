@@ -9,9 +9,9 @@ import CoreData
 import Foundation
 import SwiftUI
 
-class CalculatorViewModel: ObservableObject {
-    @Published var display: String = "0"
-    @Published var calculationHistory: String = ""
+@Observable class CalculatorViewModel {
+    var display: String = "0"
+    var calculationHistory: String = ""
     let sessionId: String
     private var currentNum: Int = 0
     private var previousNum: Int = 0
@@ -175,5 +175,4 @@ class CalculatorViewModel: ObservableObject {
             lastUpdated: currentSession.lastUpdated
         )
     }
-
 }

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct SessionHistorySheetView: View {
-    @ObservedObject var viewModel: CalculatorViewModel
+    var viewModel: CalculatorViewModel
     @Environment(\.dismiss) var dismiss
     @State private var sessions: [SessionData] = []
     @State private var isLoading = false
@@ -96,9 +96,9 @@ struct SessionHistorySheetView: View {
             }
         }
     }
-
 }
 
+// MARK: Previews
 #Preview("Light Mode") {
     SessionHistorySheetView(viewModel: CalculatorViewModel())
         .preferredColorScheme(.light)

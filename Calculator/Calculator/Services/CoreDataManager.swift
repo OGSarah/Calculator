@@ -192,5 +192,4 @@ class CoreDataManager: SessionService {
             }
         }
     }
-
 }
