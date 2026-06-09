@@ -1,4 +1,8 @@
 {
+  "features" : [
+    "refractivity",
+    "specular-location"
+  ],
   "fill" : {
     "solid" : "srgb:0.26052,0.26052,0.26052,1.00000"
   },
@@ -20,11 +24,16 @@
         }
       ],
       "lighting" : "individual",
+      "refractivity" : {
+        "depth" : 0.4994140625,
+        "enabled" : true,
+        "strength" : 0.0221484375
+      },
       "shadow" : {
         "kind" : "layer-color",
         "opacity" : 0.5
       },
-      "specular" : true,
+      "specular" : "inside",
       "translucency" : {
         "enabled" : true,
         "value" : 0.5
