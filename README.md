@@ -3,7 +3,7 @@
   <h1 style="display: inline-block; vertical-align: middle;">Calculator</h1>
 </div>
 
-A SwiftUI calculator app that performs basic arithmetic operations, logs session data to a Go server and SQLite database, and stores sessions locally on the iOS device using Core Data.
+A SwiftUI calculator app that performs basic arithmetic operations, logs session data to a Go server and SQLite database, and stores sessions locally on the iOS device using SwiftData.
 
 [![Unit Tests](https://github.com/OGSarah/Calculator/actions/workflows/tests.yml/badge.svg)](https://github.com/OGSarah/Calculator/actions/workflows/tests.yml)
 
@@ -39,7 +39,7 @@ Here are some screenshots showcasing the app's features:
 - SwiftUI
 - Swift Testing framework (unit tests)
 - XCTest + XCUIAutomation (UI tests)
-- CoreData
+- SwiftData
 
 ### Focus Areas:
 
@@ -126,7 +126,7 @@ Here are some screenshots showcasing the app's features:
 - SwiftUI
 - MVVM Architecture
 - SwiftLint
-- Persists data locally via Core Data and sends each session’s data to the backend once the app is about to go into the background.
+- Persists data locally via SwiftData and sends each session’s data to the backend once the app is about to go into the background.
 - Creates a new session each time the app launches.
 
 ## Back-end Technical Details
