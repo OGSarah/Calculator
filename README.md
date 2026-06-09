@@ -5,6 +5,11 @@
 
 A SwiftUI calculator app that performs basic arithmetic operations, logs session data to a Go server and SQLite database, and stores sessions locally on the iOS device using Core Data.
 
+[![Unit Tests](https://github.com/OGSarah/Calculator/actions/workflows/tests.yml/badge.svg)](https://github.com/OGSarah/Calculator/actions/workflows/tests.yml)
+
+**NOTE:**
+Tests will fail on Github until they add Xcode 27 with iOS 27 support. They pass locally with the latest Xcode 27 beta. Since I'm not shipping this app, I will leave the project as is until Git
+
 ## Screenshots:
 
 Here are some screenshots showcasing the app's features:
