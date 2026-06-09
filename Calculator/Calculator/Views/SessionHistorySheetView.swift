@@ -41,6 +41,7 @@ struct SessionHistorySheetView: View {
                             ProgressView()
                                 .frame(maxWidth: .infinity)
                                 .listRowBackground(Color(.systemBackground))
+                                .accessibilityLabel("Loading previous sessions")
                         } else if sessions.filter({ $0.sessionId != viewModel.sessionId }).isEmpty {
                             ContentUnavailableView {
                                 Label("No Previous Sessions", systemImage: "timer")

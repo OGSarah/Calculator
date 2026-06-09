@@ -25,6 +25,7 @@ struct SessionDetailView: View {
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
+            .accessibilityElement(children: .combine)
 
             Grid(alignment: .leading, horizontalSpacing: 20, verticalSpacing: 8) {
                 GridRow {
@@ -55,14 +56,19 @@ struct SessionDetailView: View {
     private func statView(label: String, value: Int, symbol: String) -> some View {
         HStack(spacing: 4) {
             Text(symbol)
-                .font(.system(size: 14, weight: .medium))
+                .font(.subheadline.weight(.medium))
                 .foregroundColor(.secondary)
             Text("\(value)")
-                .font(.system(size: 14, weight: .semibold))
+                .font(.subheadline.weight(.semibold))
             Text(label)
-                .font(.system(size: 14))
+                .font(.subheadline)
                 .foregroundColor(.secondary)
         }
+        // Read as a single unit, e.g. "Additions, 3", instead of announcing
+        // the bare symbol and number separately.
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(label)
+        .accessibilityValue("\(value)")
     }
 }
 

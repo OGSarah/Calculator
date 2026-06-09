@@ -15,6 +15,11 @@ struct CalculatorView: View {
     @State private var viewModel = CalculatorViewModel()
     @State private var showingSessionSheet = false
 
+    // Font sizes that scale with the user's Dynamic Type setting while
+    // keeping the display visually larger than the history line.
+    @ScaledMetric(relativeTo: .largeTitle) private var displayFontSize: CGFloat = 60
+    @ScaledMetric(relativeTo: .title) private var historyFontSize: CGFloat = 30
+
     private let buttonLayout: [[ButtonConfig?]] = [
         [.init(title: "7"), .init(title: "8"), .init(title: "9"), .init(title: "AC")],
         [.init(title: "4"), .init(title: "5"), .init(title: "6"), .init(title: "+")],
@@ -54,6 +59,7 @@ struct CalculatorView: View {
                 .strokeBorder(.gray.opacity(0.3), lineWidth: 1)
         )
         .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 2)
+        .accessibilityHint("Shows statistics for your calculation sessions")
     }
 
     private var calculatorDisplay: some View {
@@ -82,20 +88,28 @@ struct CalculatorView: View {
 
     private var historyText: some View {
         Text(viewModel.calculationHistory)
-            .font(.system(size: 30))
+            .font(.system(size: historyFontSize))
             .foregroundColor(.gray)
             .lineLimit(1)
             .minimumScaleFactor(0.5)
             .frame(maxWidth: .infinity, alignment: .trailing)
+            .accessibilityHidden(viewModel.calculationHistory.isEmpty)
+            .accessibilityLabel("Calculation")
+            .accessibilityValue(viewModel.calculationHistory)
     }
 
     private var displayText: some View {
         Text(viewModel.display)
-            .font(.system(size: 60))
+            .font(.system(size: displayFontSize))
             .lineLimit(1)
             .minimumScaleFactor(0.5)
             .frame(maxWidth: .infinity, alignment: .trailing)
             .padding()
+            .accessibilityLabel("Result")
+            .accessibilityValue(viewModel.display)
+            // Keep the raw value as the identifier so UI tests can read the display.
+            .accessibilityIdentifier(viewModel.display)
+            .accessibilityAddTraits(.updatesFrequently)
     }
 
     private var buttonGrid: some View {
