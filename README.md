@@ -32,6 +32,27 @@ Here are some screenshots showcasing the app's features:
   </div>
 </div>
 
+## Key Features:
+
+## Technologies:
+- Swift 6
+- SwiftUI
+- Swift Testing framework (unit tests)
+- XCTest + XCUIAutomation (UI tests)
+- CoreData
+
+### Focus Areas:
+
+## Data Source:
+
+## Architecture & Design Patterns:
+
+### Testing
+
+### Continuous Integration
+
+### Trade-offs and Decisions:
+
 ## Requirements
 - macOS 27
 - Xcode 27
