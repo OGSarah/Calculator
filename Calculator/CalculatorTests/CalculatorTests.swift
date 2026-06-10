@@ -198,11 +198,27 @@ struct CalculatorViewModelTests {
         #expect(sessions.first?.sessionId == "abc")
     }
 
-    @Test func postSessionDataDelegatesToService() {
+    @Test func postSessionDataDelegatesToService() async {
         let mock = MockSessionService()
         let viewModel = CalculatorViewModel(sessionService: mock)
-        viewModel.postSessionDataToBackend()
+        await viewModel.postSessionDataToBackend()
         #expect(mock.postCallCount == 1)
         #expect(mock.lastPostedSession?.sessionId == viewModel.sessionId)
+    }
+
+    @Test func postSessionDataSwallowsServiceErrors() async {
+        let mock = MockSessionService()
+        mock.postError = URLError(.notConnectedToInternet)
+        let viewModel = CalculatorViewModel(sessionService: mock)
+        // A sync failure must not propagate out of the view model.
+        await viewModel.postSessionDataToBackend()
+        #expect(mock.postCallCount == 1)
+    }
+
+    @Test func flushPendingSessionsDelegatesToService() async {
+        let mock = MockSessionService()
+        let viewModel = CalculatorViewModel(sessionService: mock)
+        await viewModel.flushPendingSessions()
+        #expect(mock.flushCallCount == 1)
     }
 }

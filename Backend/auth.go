@@ -1,42 +1,40 @@
 package main
 
 import (
-    "encoding/base64"
-    "net/http"
-    "strings"
+	"os"
+
+	"github.com/gin-gonic/gin"
 )
 
+// Development fallbacks used when the corresponding environment variables are
+// unset. In a real deployment these would never be checked in — credentials
+// would come solely from the environment or a secrets store.
 const (
-    username = "admin"
-    password = "calculator123"
+	defaultUsername = "admin"
+	defaultPassword = "calculator123"
 )
 
-func authMiddleware(next http.HandlerFunc) http.HandlerFunc {
-    return func(w http.ResponseWriter, r *http.Request) {
-        authHeader := r.Header.Get("Authorization")
-        if authHeader == "" {
-            http.Error(w, "Authorization header required", http.StatusUnauthorized)
-            return
-        }
+// basicAuth guards routes with HTTP Basic auth. Credentials are read from the
+// CALC_USERNAME / CALC_PASSWORD environment variables, falling back to the
+// development defaults above. gin.BasicAuth handles header parsing, a
+// constant-time credential comparison, and the 401 / WWW-Authenticate response.
+func basicAuth() gin.HandlerFunc {
+	return gin.BasicAuth(gin.Accounts{
+		authUsername(): authPassword(),
+	})
+}
 
-        authParts := strings.SplitN(authHeader, " ", 2)
-        if len(authParts) != 2 || authParts[0] != "Basic" {
-            http.Error(w, "Invalid authorization header", http.StatusUnauthorized)
-            return
-        }
+func authUsername() string {
+	return envOrDefault("CALC_USERNAME", defaultUsername)
+}
 
-        decoded, err := base64.StdEncoding.DecodeString(authParts[1])
-        if err != nil {
-            http.Error(w, "Invalid base64 encoding", http.StatusUnauthorized)
-            return
-        }
+func authPassword() string {
+	return envOrDefault("CALC_PASSWORD", defaultPassword)
+}
 
-        credentials := strings.SplitN(string(decoded), ":", 2)
-        if len(credentials) != 2 || credentials[0] != username || credentials[1] != password {
-            http.Error(w, "Invalid credentials", http.StatusUnauthorized)
-            return
-        }
-
-        next(w, r)
-    }
+func envOrDefault(key, fallback string) string {
+	if value := os.Getenv(key); value != "" {
+		return value
+	}
+	return fallback
 }

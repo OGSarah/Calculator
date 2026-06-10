@@ -20,11 +20,13 @@ final class MockSessionService: SessionService {
     private(set) var lastSavedDate: Date?
     private(set) var postCallCount = 0
     private(set) var lastPostedSession: SessionData?
+    private(set) var flushCallCount = 0
     private(set) var deleteCallCount = 0
 
     // MARK: - Configurable Behavior
     var sessionsToReturn: [SessionEntity] = []
-    var postResult: Result<Void, Error> = .success(())
+    /// When set, `postSessionDataToBackend` throws this instead of succeeding.
+    var postError: Error?
 
     private var storedOperations: [String: [String: Int]] = [:]
     private var storedDates: [String: Date] = [:]
@@ -62,10 +64,16 @@ final class MockSessionService: SessionService {
         sessionsToReturn
     }
 
-    func postSessionDataToBackend(session: SessionData, completion: @escaping (Result<Void, Error>) -> Void) {
+    func postSessionDataToBackend(session: SessionData) async throws {
         postCallCount += 1
         lastPostedSession = session
-        completion(postResult)
+        if let postError {
+            throw postError
+        }
+    }
+
+    func flushPendingSessions() async {
+        flushCallCount += 1
     }
 
 #if DEBUG

@@ -13,14 +13,21 @@ final class SwiftDataManager: SessionService {
 
     let modelContainer: ModelContainer
     private let context: ModelContext
+    private let configuration: BackendConfiguration
+    private let pendingStore: PendingSyncStore
 
-    private init() {
+    private init(
+        configuration: BackendConfiguration = .current,
+        pendingStore: PendingSyncStore = PendingSyncStore()
+    ) {
         do {
             modelContainer = try ModelContainer(for: SessionEntity.self)
         } catch {
             fatalError("Unable to create ModelContainer: \(error)")
         }
         context = ModelContext(modelContainer)
+        self.configuration = configuration
+        self.pendingStore = pendingStore
     }
 
     func fetchLastUpdated(for sessionId: String) -> Date? {
@@ -76,57 +83,34 @@ final class SwiftDataManager: SessionService {
         return ["+": 0, "−": 0, "×": 0, "÷": 0]
     }
 
-    func postSessionDataToBackend(session: SessionData, completion: @escaping (Result<Void, any Error>) -> Void) {
-        guard let url = URL(string: "http://localhost:3000/api/session") else {
-            print("Invalid URL")
-            completion(.failure(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])))
-            return
-        }
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        addBasicAuth(to: &request)
-
+    func postSessionDataToBackend(session: SessionData) async throws {
         do {
-            let jsonData = try JSONEncoder().encode(session)
-            print("Sending session data: \(String(data: jsonData, encoding: .utf8) ?? "Unable to decode")")
-            URLSession.shared.uploadTask(with: request, from: jsonData) { data, response, error in
-                if let error = error {
-                    print("Network error: \(error.localizedDescription)")
-                    return
-                }
-                if let httpResponse = response as? HTTPURLResponse, (200...299).contains(httpResponse.statusCode) {
+            try await upload(session)
+        } catch let error as URLError {
+            // The backend was unreachable. Hold onto the data and retry it later
+            // rather than dropping the session.
+            print("Network error syncing session, queued for retry: \(error.localizedDescription)")
+            pendingStore.enqueue(session)
+            throw error
+        }
+        await persistSyncedSession(session)
+    }
 
-                    let operations = [
-                        "+": session.addCount,
-                        "−": session.subtractCount,
-                        "×": session.multiplyCount,
-                        "÷": session.divideCount
-                    ]
-
-                    // Persist back on the main queue, where the context is used.
-                    DispatchQueue.main.async {
-                        _ = self.saveSession(
-                            sessionId: session.sessionId,
-                            operations: operations,
-                            lastUpdated: session.lastUpdated
-                        )
-                    }
-                    print("Backend response status: \(httpResponse.statusCode)")
-                    if let responseData = data, let responseString = String(data: responseData, encoding: .utf8) {
-                        print("Backend response body: \(responseString)")
-                    }
-                    completion(.success(()))
-                } else if let httpResponse = response as? HTTPURLResponse {
-                    print("Backend response status: \(httpResponse.statusCode)")
-                    if let responseData = data, let responseString = String(data: responseData, encoding: .utf8) {
-                        print("Backend response body: \(responseString)")
-                    }
-                }
-            }.resume()
-        } catch {
-            print("Error encoding session data: \(error)")
-            completion(.failure(error))
+    func flushPendingSessions() async {
+        for session in pendingStore.pendingSessions() {
+            do {
+                try await upload(session)
+                pendingStore.remove(sessionId: session.sessionId)
+                await persistSyncedSession(session)
+            } catch is URLError {
+                // Still offline. Leave everything queued and try again next time.
+                break
+            } catch {
+                // Permanent failure (e.g. a rejected payload). Drop it so a single
+                // bad entry can't block the rest of the queue forever.
+                print("Dropping un-syncable session \(session.sessionId): \(error)")
+                pendingStore.remove(sessionId: session.sessionId)
+            }
         }
     }
 
@@ -157,12 +141,43 @@ final class SwiftDataManager: SessionService {
 #endif
 
     // MARK: - Private Functions
-    private func addBasicAuth(to request: inout URLRequest) {
-        // In a dev or production environment, there would not be a hardcoded username and password.
-        let authString = "admin:calculator123"
-        if let authData = authString.data(using: .utf8) {
-            let base64Auth = authData.base64EncodedString()
-            request.setValue("Basic \(base64Auth)", forHTTPHeaderField: "Authorization")
+
+    /// Performs the POST. Throws `URLError` when the backend is unreachable and
+    /// `SessionSyncError` when it responds with a non-success status.
+    private func upload(_ session: SessionData) async throws {
+        var request = URLRequest(url: configuration.sessionEndpoint)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        if let authHeader = configuration.basicAuthHeaderValue {
+            request.setValue(authHeader, forHTTPHeaderField: "Authorization")
+        }
+
+        let jsonData = try JSONEncoder().encode(session)
+        let (_, response) = try await URLSession.shared.upload(for: request, from: jsonData)
+
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw SessionSyncError.invalidResponse
+        }
+        guard (200...299).contains(httpResponse.statusCode) else {
+            throw SessionSyncError.serverError(statusCode: httpResponse.statusCode)
+        }
+    }
+
+    /// Persists the synced session locally. Hops to the main actor because the
+    /// `ModelContext` is created on, and must be used from, the main thread.
+    private func persistSyncedSession(_ session: SessionData) async {
+        let operations = [
+            "+": session.addCount,
+            "−": session.subtractCount,
+            "×": session.multiplyCount,
+            "÷": session.divideCount
+        ]
+        await MainActor.run {
+            _ = self.saveSession(
+                sessionId: session.sessionId,
+                operations: operations,
+                lastUpdated: session.lastUpdated
+            )
         }
     }
 

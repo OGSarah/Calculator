@@ -61,25 +61,17 @@ import SwiftUI
         return currentSession
     }
 
-    func postSessionDataToBackend() {
-        sessionService.postSessionDataToBackend(session: currentSession) { result in
-            switch result {
-            case .success:
-                print("Session data posted to backend successfully")
-
-                // Update currentSession with the posted time
-                self.currentSession = SessionData(
-                    sessionId: self.currentSession.sessionId,
-                    addCount: self.currentSession.addCount,
-                    subtractCount: self.currentSession.subtractCount,
-                    multiplyCount: self.currentSession.multiplyCount,
-                    divideCount: self.currentSession.divideCount,
-                    lastUpdated: self.currentSession.lastUpdated
-                )
-            case .failure(let error):
-                print("Failed to post session data: \(error)")
-            }
+    func postSessionDataToBackend() async {
+        do {
+            try await sessionService.postSessionDataToBackend(session: currentSession)
+            print("Session data posted to backend successfully")
+        } catch {
+            print("Failed to post session data: \(error)")
         }
+    }
+
+    func flushPendingSessions() async {
+        await sessionService.flushPendingSessions()
     }
 
     // MARK: - Private Functions

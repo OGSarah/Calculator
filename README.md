@@ -35,7 +35,8 @@ Here are some screenshots showcasing the app's features:
 - Basic arithmetic (add, subtract, multiply, divide) with a running history line above the result.
 - Per-session usage tracking — every operation increments a counter on the active session.
 - Local persistence via SwiftData, so session history survives relaunches.
-- Background sync: session data is POSTed to the Go backend the moment the app resigns active.
+- Background sync: session data is POSTed to the Go backend (via `async/await`) the moment the app resigns active.
+- Offline-resilient sync: sessions that fail to reach the backend are queued to disk and retried on the next launch.
 - Session history sheet listing the current and prior sessions, sorted by most recently updated.
 - Full Dark Mode support and a Liquid Glass material treatment on the display and controls.
 - Accessibility built in: VoiceOver labels/values/traits and Dynamic Type via `@ScaledMetric`.
@@ -68,9 +69,10 @@ The app follows MVVM with a protocol-backed service layer.
 This is what makes the view model trivial to test in isolation — `MockSessionService` stands in for the real store with no SwiftData or networking involved.
 
 ### Testing
-- **Unit tests** (Swift Testing) cover the view model's calculation and session-tracking logic against `MockSessionService`, plus the `SessionData` encoding contract.
+- **Unit tests** (Swift Testing) cover the view model's calculation and session-tracking logic against `MockSessionService`, the `SessionData` encoding contract, and the offline `PendingSyncStore` queue (enqueue, dedupe-by-id, remove, and persistence across instances).
 - **UI tests** (XCUIAutomation) drive the calculator through real input sequences and assert on the display, using accessibility identifiers as the contract between view and test.
 - **Accessibility tests** verify VoiceOver labels/traits and that the UI holds up under Dynamic Type.
+- **Backend tests** (Go `testing` + `httptest`) cover the save/fetch persistence layer — including upsert behavior — and the HTTP handlers against a temporary SQLite database.
 
 ### Continuous Integration
 GitHub Actions runs the unit test suite on every push (`.github/workflows/tests.yml`). See the CI note at the top of this README for why the badge currently reflects the runner toolchain rather than the code.
@@ -78,9 +80,8 @@ GitHub Actions runs the unit test suite on every push (`.github/workflows/tests.
 ### Trade-offs and Decisions:
 - **Integer-only arithmetic.** The math is intentionally minimal — division truncates and there's no floating point. The focus of this project is architecture and data flow, not building a full scientific calculator.
 - **New session per launch.** Per the project brief, a fresh `sessionId` is minted on each launch rather than resuming the last one. This keeps the usage-tracking semantics simple and unambiguous.
-- **Backend is fire-and-forget on background.** Sync happens on `willResignActive` rather than after every keystroke, trading real-time accuracy for far less network chatter and battery cost.
-- **`localhost` backend.** The app points at `http://localhost:3000`, so it runs on the Simulator only. In a real deployment this would be an injected, environment-specific base URL behind real auth.
-- **Completion handlers over async/await in the service.** The networking still uses `URLSession` completion handlers; migrating this layer to async/await is the most worthwhile next refactor (see below).
+- **Sync on background, with an offline retry queue.** Sync happens on `willResignActive` rather than after every keystroke, trading real-time accuracy for far less network chatter and battery cost. If the backend is unreachable, the session is persisted to a `PendingSyncStore` on disk and retried the next time the app launches, so data is never lost.
+- **`localhost` backend, but configuration-driven.** The base URL and credentials are read from `Info.plist` via `BackendConfiguration` rather than hardcoded, and the client sends Basic auth on every request. The default points at `http://localhost:3000` (Simulator only); in a real deployment these values would come from the build configuration or a secrets store.
 
 ## Requirements
 - macOS 27
@@ -94,7 +95,9 @@ GitHub Actions runs the unit test suite on every push (`.github/workflows/tests.
 1. Install Go (1.21+): `brew install go` (macOS)
 2. Navigate to `cd Backend`
 3. Run `go mod tidy` to install dependencies.
-5. Run `go run *.go` to start the server on `http://localhost:3000`
+4. Run `go run *.go` to start the server on `http://localhost:3000`
+5. (Optional) Override the Basic auth credentials with the `CALC_USERNAME` and `CALC_PASSWORD` environment variables; they default to `admin` / `calculator123`. The iOS client reads the matching values from `Info.plist`.
+6. Run the backend test suite with `go test ./...`.
 
 ### iOS App:
 1. Open `Calculator.xcodeproj` in Xcode.
@@ -155,23 +158,20 @@ GitHub Actions runs the unit test suite on every push (`.github/workflows/tests.
 - SwiftUI
 - MVVM Architecture
 - SwiftLint
-- Persists data locally via SwiftData and sends each session’s data to the backend once the app is about to go into the background.
+- Persists data locally via SwiftData and syncs each session to the backend (with `async/await`) once the app is about to go into the background.
+- Queues failed syncs to disk (`PendingSyncStore`) and retries them on the next launch, so nothing is lost when the backend is offline.
+- Reads the backend base URL and credentials from `Info.plist` via `BackendConfiguration` rather than hardcoding them.
 - Creates a new session each time the app launches.
 
 ## Back-end Technical Details
 - Written in Go
 - Uses the Gin web framework for HTTP routing.
 - Stores data in an SQLite database located at Backend/calculator.db.
-- Implements basic authentication with hardcoded credentials (only done for this sample project, not something that would be done in development or production environments), though not currently applied to routes.
+- Protects all `/api` routes with HTTP Basic auth (`gin.BasicAuth`). Credentials are read from the `CALC_USERNAME` / `CALC_PASSWORD` environment variables, falling back to development defaults — never hardcoded into the route logic. In production these would come solely from the environment or a secrets store.
+- Handlers and the persistence layer are factored into testable functions (`setupRouter`, `saveSession`, `fetchSessions`) and covered by `go test` (persistence, upsert, handler success/failure, and auth).
 - Provides two endpoints:
   - POST /api/session: Saves session data to the database
   - GET /api/sessions: Retrieves all stored sessions (this was for my testing purposes)
-
-## Next steps / what I'd do with more time:
-- Migrate the `SessionService` networking from `URLSession` completion handlers to async/await and make `postSessionDataToBackend` an `async throws` call.
-- Add a retry/queue for failed background syncs so data isn't lost when the backend is unreachable.
-- Add test coverage on the Go backend (handler and persistence tests).
-- Drive the backend base URL and credentials from configuration rather than hardcoding them.
 
 ## License
 

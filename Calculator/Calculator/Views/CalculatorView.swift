@@ -38,9 +38,15 @@ struct CalculatorView: View {
                 .presentationDetents([.large])
         }
         .padding(20)
+        .task {
+            // Retry any sessions that failed to sync on a previous run.
+            await viewModel.flushPendingSessions()
+        }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)) { _ in
             print("App is going to background - triggering sync")
-            viewModel.postSessionDataToBackend()
+            Task {
+                await viewModel.postSessionDataToBackend()
+            }
         }
     }
 
