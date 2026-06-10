@@ -13,23 +13,13 @@ A SwiftUI calculator built to demonstrate a clean, testable iOS architecture end
 
 Here are some screenshots showcasing the app's features:
 
-<div align="center">
-  <div style="border: 2px solid white; border-radius: 10px;">
-    <img width="20%" src="https://github.com/OGSarah/Calculator/blob/6dac41a4bad70e4db09a69d2934354fb1d012871/Screenshots/calculatorscreen_dark.png">
-    <img width="20%" src="https://github.com/OGSarah/Calculator/blob/6dac41a4bad70e4db09a69d2934354fb1d012871/Screenshots/calculatorscreen_light.png">
-    <img width="20%" src="https://github.com/OGSarah/Calculator/blob/6dac41a4bad70e4db09a69d2934354fb1d012871/Screenshots/nosessionhistory_dark.png">
-    <img width="20%" src="https://github.com/OGSarah/Calculator/blob/6dac41a4bad70e4db09a69d2934354fb1d012871/Screenshots/nosessionhistory_light.png">
-  </div>
-</div>
+| Calculator screen | No session history | Session history |
+| :---: | :---: | :---: |
+| ![Calculator screen](Screenshots/calculatorscreen_dark.png) | ![No session history](Screenshots/nosessionhistory_dark.png) | ![Session history](Screenshots/sessionhistory_dark.png) |
 
-<br><br> 
-
-<div align="center">
-  <div style="border: 2px solid white; border-radius: 10px;">
-    <img width="20%" src="https://github.com/OGSarah/Calculator/blob/6dac41a4bad70e4db09a69d2934354fb1d012871/Screenshots/sessionhistory_dark.png">
-    <img width="20%" src="https://github.com/OGSarah/Calculator/blob/6dac41a4bad70e4db09a69d2934354fb1d012871/Screenshots/sessionhistory_light.png">
-  </div>
-</div>
+| Calculator screen | No session history | Session history |
+| :---: | :---: | :---: |
+| ![Calculator screen](Screenshots/calculatorscreen_light.png) | ![No session history](Screenshots/nosessionhistory_light.png) | ![Session history](Screenshots/sessionhistory_light.png) |
 
 ## Key Features:
 - Basic arithmetic (add, subtract, multiply, divide) with a running history line above the result.
