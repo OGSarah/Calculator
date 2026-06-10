@@ -17,11 +17,14 @@ final class AccessibilityUITests: XCTestCase {
         continueAfterFailure = false
         // The calculator is designed for a portrait layout; pin the
         // orientation so the keypad fits on screen regardless of the
-        // simulator's current state.
-        XCUIDevice.shared.orientation = .portrait
+        // simulator's current state. `XCUIDevice.shared` is main actor-isolated;
+        // UI test setup runs on the main thread, so assume that isolation here.
         // Each test launches the app itself so Dynamic Type tests can supply
         // their own launch arguments.
-        app = XCUIApplication()
+        app = MainActor.assumeIsolated {
+            XCUIDevice.shared.orientation = .portrait
+            return XCUIApplication()
+        }
     }
 
     override func tearDownWithError() throws {

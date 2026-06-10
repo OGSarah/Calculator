@@ -14,8 +14,13 @@ final class CalculatorUITests: XCTestCase {
     override func setUpWithError() throws {
         // Stop immediately when a UI failure occurs.
         continueAfterFailure = false
-        app = XCUIApplication()
-        app.launch()
+        // XCTest runs setUp on the main thread, so it's safe to assume main-actor
+        // isolation for the main actor-isolated XCUIApplication APIs.
+        app = MainActor.assumeIsolated {
+            let app = XCUIApplication()
+            app.launch()
+            return app
+        }
     }
 
     override func tearDownWithError() throws {

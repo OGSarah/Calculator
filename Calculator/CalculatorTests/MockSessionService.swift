@@ -11,6 +11,7 @@
 import Foundation
 @testable import Calculator
 
+@MainActor
 final class MockSessionService: SessionService {
 
     // MARK: - Recorded Interactions

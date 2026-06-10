@@ -9,6 +9,7 @@ import Testing
 import Foundation
 @testable import Calculator
 
+@MainActor
 struct CalculatorViewModelTests {
 
     // MARK: - Initial State

@@ -8,7 +8,9 @@
 import Foundation
 import SwiftUI
 
-@Observable class CalculatorViewModel {
+@MainActor
+@Observable
+class CalculatorViewModel {
     var display: String = "0"
     var calculationHistory: String = ""
     let sessionId: String

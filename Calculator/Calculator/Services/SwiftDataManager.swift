@@ -8,6 +8,10 @@
 import Foundation
 import SwiftData
 
+// Isolated to the main actor because its `ModelContext` is created on, and must
+// be used from, the main thread. Main-actor isolation also makes the type
+// implicitly `Sendable`, so the shared singleton is concurrency-safe.
+@MainActor
 final class SwiftDataManager: SessionService {
     static let shared = SwiftDataManager()
 
@@ -93,7 +97,7 @@ final class SwiftDataManager: SessionService {
             pendingStore.enqueue(session)
             throw error
         }
-        await persistSyncedSession(session)
+        persistSyncedSession(session)
     }
 
     func flushPendingSessions() async {
@@ -101,7 +105,7 @@ final class SwiftDataManager: SessionService {
             do {
                 try await upload(session)
                 pendingStore.remove(sessionId: session.sessionId)
-                await persistSyncedSession(session)
+                persistSyncedSession(session)
             } catch is URLError {
                 // Still offline. Leave everything queued and try again next time.
                 break
@@ -163,22 +167,19 @@ final class SwiftDataManager: SessionService {
         }
     }
 
-    /// Persists the synced session locally. Hops to the main actor because the
-    /// `ModelContext` is created on, and must be used from, the main thread.
-    private func persistSyncedSession(_ session: SessionData) async {
+    /// Persists the synced session locally.
+    private func persistSyncedSession(_ session: SessionData) {
         let operations = [
             "+": session.addCount,
             "−": session.subtractCount,
             "×": session.multiplyCount,
             "÷": session.divideCount
         ]
-        await MainActor.run {
-            _ = self.saveSession(
-                sessionId: session.sessionId,
-                operations: operations,
-                lastUpdated: session.lastUpdated
-            )
-        }
+        _ = saveSession(
+            sessionId: session.sessionId,
+            operations: operations,
+            lastUpdated: session.lastUpdated
+        )
     }
 
     private func saveContext() {

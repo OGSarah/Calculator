@@ -7,6 +7,7 @@
 
 import Foundation
 
+@MainActor
 protocol SessionService {
     func fetchLastUpdated(for sessionId: String) -> Date?
     func saveSession(sessionId: String, operations: [String: Int], lastUpdated: Date?) -> SessionEntity
