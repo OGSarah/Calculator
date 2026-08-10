@@ -7,8 +7,6 @@ A SwiftUI calculator built to demonstrate a clean, testable iOS architecture end
 
 [![Unit Tests](https://github.com/OGSarah/Calculator/actions/workflows/tests.yml/badge.svg)](https://github.com/OGSarah/Calculator/actions/workflows/tests.yml)
 
-> **CI note:** The suite is green locally on the Xcode 27 / iOS 27 beta toolchain. The GitHub Actions runners don't yet ship that toolchain, so the badge will stay red until they do. This is a portfolio project rather than a shipping app, so I'm leaving CI as-is rather than pinning to an older SDK.
-
 ## Screenshots:
 
 Here are some screenshots showcasing the app's features:
